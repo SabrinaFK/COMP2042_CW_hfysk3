@@ -31,7 +31,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     private static final String EXIT = "Exit";
     private static final String PAUSE = "Pause Menu";
     private static final int TEXT_SIZE = 30;
-    private static final Color MENU_COLOR = new Color(0,255,0);
+    private static final Color MENU_COLOR = new Color(175, 228, 250);
 
 
     private static final int DEF_WIDTH = 600;
@@ -273,8 +273,14 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
             case KeyEvent.VK_A:
                 wall.player.moveLeft();
                 break;
+            case KeyEvent.VK_LEFT:
+                wall.player.moveLeft();
+                break;
             case KeyEvent.VK_D:
-                wall.player.movRight();
+                wall.player.moveRight();
+                break;
+            case KeyEvent.VK_RIGHT:
+                wall.player.moveRight();
                 break;
             case KeyEvent.VK_ESCAPE:
                 showPauseMenu = !showPauseMenu;
