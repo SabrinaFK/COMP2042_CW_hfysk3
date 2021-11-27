@@ -30,14 +30,14 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     private static final String RESTART = "Restart";
     private static final String EXIT = "Exit";
     private static final String PAUSE = "Pause Menu";
-    private static final int TEXT_SIZE = 30;
+    private static final int TEXT_SIZE = 40;
     private static final Color MENU_COLOR = new Color(175, 228, 250);
 
 
     private static final int DEF_WIDTH = 600;
     private static final int DEF_HEIGHT = 450;
 
-    private static final Color BG_COLOR = Color.WHITE;
+    private static final Color BG_COLOR = new Color(175, 228, 250);
 
     private Timer gameTimer;
 
@@ -63,10 +63,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         strLen = 0;
         showPauseMenu = false;
 
-
-
         menuFont = new Font("Monospaced",Font.PLAIN,TEXT_SIZE);
-
 
         this.initialize();
         message = "";
@@ -79,12 +76,14 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         gameTimer = new Timer(10,e ->{
             wall.move();
             wall.findImpacts();
-            message = String.format("Bricks: %d Balls %d",wall.getBrickCount(),wall.getBallCount());
+            message = String.format("Bricks: %d Balls %d Player Score: %d",wall.getBrickCount(),wall.getBallCount(),wall.getPlayerScore());
             if(wall.isBallLost()){
                 if(wall.ballEnd()){
                     wall.wallReset();
-                    message = "Game over";
+                    message = String.format("Game Over \n Player Score: %d",wall.getPlayerScore());
+                    wall.setPlayerScore(0);
                 }
+
                 wall.ballReset();
                 gameTimer.stop();
             }
@@ -269,30 +268,37 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {
-        switch(keyEvent.getKeyCode()){
+        int a = keyEvent.getKeyCode();
+        switch(a){
+            //Move player left
             case KeyEvent.VK_A:
                 wall.player.moveLeft();
                 break;
             case KeyEvent.VK_LEFT:
                 wall.player.moveLeft();
                 break;
+
+            //Move player right
             case KeyEvent.VK_D:
                 wall.player.moveRight();
                 break;
             case KeyEvent.VK_RIGHT:
                 wall.player.moveRight();
                 break;
+
+            //pause & display menu
             case KeyEvent.VK_ESCAPE:
                 showPauseMenu = !showPauseMenu;
                 repaint();
                 gameTimer.stop();
                 break;
+
+            //Pause game
             case KeyEvent.VK_SPACE:
-                if(!showPauseMenu)
-                    if(gameTimer.isRunning())
-                        gameTimer.stop();
-                    else
-                        gameTimer.start();
+                if(gameTimer.isRunning())
+                    gameTimer.stop();
+                else
+                    gameTimer.start();
                 break;
             case KeyEvent.VK_F1:
                 if(keyEvent.isAltDown() && keyEvent.isShiftDown())
@@ -319,6 +325,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         else if(restartButtonRect.contains(p)){
             message = "Restarting Game...";
             wall.ballReset();
+            wall.setPlayerScore(0);
             wall.wallReset();
             showPauseMenu = false;
             repaint();

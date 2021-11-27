@@ -43,6 +43,7 @@ public class Wall {
     private Point startPoint;
     private int brickCount;
     private int ballCount;
+    private int playerScore;
     private boolean ballLost;
 
     public Wall(Rectangle drawArea, int brickCount, int lineCount, double brickDimensionRatio, Point ballPos){
@@ -196,6 +197,7 @@ public class Wall {
         }
         else if(ball.getPosition().getY() > area.getY() + area.getHeight()){
             ballCount--;
+            playerScore-=100;
             ballLost = true;
         }
     }
@@ -206,17 +208,21 @@ public class Wall {
                 //Vertical Impact
                 case Brick.UP_IMPACT:
                     ball.reverseY();
+                    playerScore+=100;
                     return b.setImpact(ball.down, Brick.Crack.UP);
                 case Brick.DOWN_IMPACT:
                     ball.reverseY();
+                    playerScore+=100;
                     return b.setImpact(ball.up,Brick.Crack.DOWN);
 
                 //Horizontal Impact
                 case Brick.LEFT_IMPACT:
                     ball.reverseX();
+                    playerScore+=100;
                     return b.setImpact(ball.right,Brick.Crack.RIGHT);
                 case Brick.RIGHT_IMPACT:
                     ball.reverseX();
+                    playerScore+=100;
                     return b.setImpact(ball.left,Brick.Crack.LEFT);
             }
         }
@@ -236,6 +242,9 @@ public class Wall {
         return ballCount;
     }
 
+    public int getPlayerScore(){return playerScore;}
+    public void setPlayerScore(int num){playerScore=num;}
+
     public boolean isBallLost(){
         return ballLost;
     }
@@ -243,6 +252,7 @@ public class Wall {
     public void ballReset(){
         player.moveTo(startPoint);
         ball.moveTo(startPoint);
+
         int speedX,speedY;
         do{
             speedX = rnd.nextInt(5) - 2;
@@ -287,9 +297,8 @@ public class Wall {
         ball.setYSpeed(s);
     }
 
-    public void resetBallCount(){
-        ballCount = 3;
-    }
+    public void resetBallCount(){ballCount = 3;}
+
 
     private Brick makeBrick(Point point, Dimension size, int type){
         Brick out;
