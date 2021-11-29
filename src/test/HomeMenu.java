@@ -35,9 +35,9 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
     private static final String MENU_TEXT = "Exit";
 
     private static final Color BG_COLOR = new Color(181, 229, 255);
-    private static final Color BORDER_COLOR = new Color(140, 188, 255);
+    private static final Color BORDER_COLOR = new Color(23, 66, 131);
     private static final Color DASH_BORDER_COLOR = new  Color(255, 216, 0);
-    private static final Color TEXT_COLOR = new Color(81, 120, 255);
+    private static final Color TEXT_COLOR = new Color(130, 157, 255);
     private static final Color CLICKED_BUTTON_COLOR = BG_COLOR.brighter();
     private static final Color CLICKED_TEXT = Color.WHITE;
     private static final int BORDER_SIZE = 5;
@@ -131,7 +131,7 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
         g2d.fill(menuFace);
 
-        //adding background images
+        //adding background image
         Image picture = Toolkit.getDefaultToolkit().getImage("images/start-bg.jpg");
         g2d.drawImage(picture, 0, 0, this);
 
