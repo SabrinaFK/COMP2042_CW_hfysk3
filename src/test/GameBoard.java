@@ -52,6 +52,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     private Rectangle continueButtonRect;
     private Rectangle exitButtonRect;
     private Rectangle restartButtonRect;
+    private Rectangle scoreBoard;
     private int strLen;
 
     private DebugConsole debugConsole;
