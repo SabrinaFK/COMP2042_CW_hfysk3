@@ -30,14 +30,14 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
     private static final String GREETINGS = "Welcome to:";
     private static final String GAME_TITLE = "Brick Destroy";
-    private static final String CREDITS = "Version 0.1";
+    private static final String CREDITS = "Version 0.2";
     private static final String START_TEXT = "Start";
     private static final String MENU_TEXT = "Exit";
 
     private static final Color BG_COLOR = new Color(181, 229, 255);
-    private static final Color BORDER_COLOR = new Color(8, 85, 200);
+    private static final Color BORDER_COLOR = new Color(140, 188, 255);
     private static final Color DASH_BORDER_COLOR = new  Color(255, 216, 0);
-    private static final Color TEXT_COLOR = new Color(16, 52, 166);
+    private static final Color TEXT_COLOR = new Color(81, 120, 255);
     private static final Color CLICKED_BUTTON_COLOR = BG_COLOR.brighter();
     private static final Color CLICKED_TEXT = Color.WHITE;
     private static final int BORDER_SIZE = 5;
@@ -129,8 +129,11 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
     private void drawContainer(Graphics2D g2d){
         Color prev = g2d.getColor();
 
-        Image picture = Toolkit.getDefaultToolkit().getImage("bg.png");
         g2d.fill(menuFace);
+
+        //adding background images
+        Image picture = Toolkit.getDefaultToolkit().getImage("images/start-bg.jpg");
+        g2d.drawImage(picture, 0, 0, this);
 
         Stroke tmp = g2d.getStroke();
 
