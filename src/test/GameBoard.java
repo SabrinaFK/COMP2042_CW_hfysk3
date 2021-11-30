@@ -21,19 +21,22 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.FontRenderContext;
-
+import java.awt.geom.Rectangle2D;
 
 
 public class GameBoard extends JComponent implements KeyListener,MouseListener,MouseMotionListener {
 
+    //Text in Pause Menu
     private static final String CONTINUE = "Continue";
     private static final String RESTART = "Restart";
     private static final String EXIT = "Exit";
     private static final String PAUSE = "Pause Menu";
+
+    //Format for Pause Menu
     private static final int TEXT_SIZE = 40;
     private static final Color MENU_COLOR = new Color(175, 228, 250);
 
-
+    //Game frame size
     private static final int DEF_WIDTH = 600;
     private static final int DEF_HEIGHT = 450;
 
@@ -41,17 +44,23 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
 
     private Wall wall;
 
-    private String message1;
-    private String message2;
+    private String message1;                //Top Text on the center of level
+    private String message2;                //Lower Text on the center of level
+    private String MUTE = "Mute";           //Text on Mute / Unmute Button
 
-    private boolean showPauseMenu;
+    private boolean showPauseMenu;          //indicates if pause menu is visible or not
+    private boolean muteAudio;              //Indicates if audio is muted / unmuted
 
     private Font menuFont;
 
+    //Pause Menu Buttons
     private Rectangle continueButtonRect;
     private Rectangle exitButtonRect;
     private Rectangle restartButtonRect;
+    private Rectangle muteButton;
+
     private Rectangle scoreBoard;
+
     private int strLen;
 
     private DebugConsole debugConsole;
@@ -122,13 +131,14 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         this.addMouseMotionListener(this);
     }
 
+    public void musicPlay(){
+
+    }
 
     public void paint(Graphics g){
-
         Graphics2D g2d = (Graphics2D) g;
 
         clear(g2d);
-
 
         g2d.setColor(new Color(143, 200, 243));
         g2d.drawString(message1,255,220);
@@ -234,7 +244,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         g2d.drawString(PAUSE,x,y);
 
         x = this.getWidth() / 8;
-        y = this.getHeight() / 4;
+        y = this.getHeight() / 5;
 
 
         if(continueButtonRect == null){
@@ -254,7 +264,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
 
         g2d.drawString(RESTART,x,y);
 
-        y *= 3.0/2;
+        y *= 1.5;
 
         if(exitButtonRect == null){
             exitButtonRect = (Rectangle) continueButtonRect.clone();
@@ -263,7 +273,14 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
 
         g2d.drawString(EXIT,x,y);
 
+        y *= 1.35;
 
+        if(muteButton == null){
+            muteButton = (Rectangle) continueButtonRect.clone();
+            muteButton.setLocation(x,y-muteButton.height);
+        }
+
+        g2d.drawString(MUTE,x,y);
 
         g2d.setFont(tmpFont);
         g2d.setColor(tmpColor);
@@ -307,6 +324,8 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
                 else
                     gameTimer.start();
                 break;
+
+            //Show Debug Panel
             case KeyEvent.VK_F1:
                 if(keyEvent.isAltDown() && keyEvent.isShiftDown())
                     debugConsole.setVisible(true);
@@ -325,10 +344,25 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         Point p = mouseEvent.getPoint();
         if(!showPauseMenu)
             return;
+
+        if(muteButton.contains(p)){
+            muteAudio= !muteAudio;
+            if (muteAudio==true)
+            {
+                MUTE = "Unmute";
+            }
+            else
+            {
+                MUTE = "Mute";
+            }
+            repaint();
+        }
+
         if(continueButtonRect.contains(p)){
             showPauseMenu = false;
             repaint();
         }
+
         else if(restartButtonRect.contains(p)){
             message1 = "Please Wait";
             message2 = "Restarting Game...";
@@ -373,7 +407,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     public void mouseMoved(MouseEvent mouseEvent) {
         Point p = mouseEvent.getPoint();
         if(exitButtonRect != null && showPauseMenu) {
-            if (exitButtonRect.contains(p) || continueButtonRect.contains(p) || restartButtonRect.contains(p))
+            if (exitButtonRect.contains(p) || continueButtonRect.contains(p) || restartButtonRect.contains(p) || muteButton.contains(p))
                 this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             else
                 this.setCursor(Cursor.getDefaultCursor());

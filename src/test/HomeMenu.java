@@ -28,39 +28,61 @@ import java.awt.geom.Rectangle2D;
 
 public class HomeMenu extends JComponent implements MouseListener, MouseMotionListener {
 
+    //Start Menu Text
     private static final String GREETINGS = "Welcome to:";
     private static final String GAME_TITLE = "Brick Destroy";
     private static final String CREDITS = "Version 0.2";
-    private static final String START_TEXT = "Start";
-    private static final String MENU_TEXT = "Exit";
 
+    //Start Menu Button text
+    private static final String START_TEXT = "Start";
+    private static final String EXIT_TEXT = "Exit";
+    private static final String TUTORIAL_TEXT = "Tutorial";
+
+    //Start Menu Colors
     private static final Color BG_COLOR = new Color(181, 229, 255);
     private static final Color BORDER_COLOR = new Color(23, 66, 131);
     private static final Color DASH_BORDER_COLOR = new  Color(255, 216, 0);
     private static final Color TEXT_COLOR = new Color(130, 157, 255);
     private static final Color CLICKED_BUTTON_COLOR = BG_COLOR.brighter();
     private static final Color CLICKED_TEXT = Color.WHITE;
+
+    //Start Menu Button Rectangles
+    private Rectangle menuFace;
+    private Rectangle startButton;
+    private Rectangle exitButton;
+    private Rectangle tutorialButton;
+
+    //Tutorial Menu Button Text
+    private static final String BACK = "Back";
+
+    //Tutorial Menu Button Rectangles
+    private Rectangle backButton;
+
+    private boolean showTutorial;
+
+    //Border sizes
     private static final int BORDER_SIZE = 5;
     private static final float[] DASHES = {12,6};
 
-    private Rectangle menuFace;
-    private Rectangle startButton;
-    private Rectangle menuButton;
+    //Border Strokes
+    private BasicStroke borderStroke;
+    private BasicStroke borderStroke_noDashes;
 
-
-    private BasicStroke borderStoke;
-    private BasicStroke borderStoke_noDashes;
-
-    private Font greetingsFont;
-    private Font gameTitleFont;
-    private Font creditsFont;
-    private Font buttonFont;
+    //Fonts
+    private Font greetingsFont;                     //welcome to:
+    private Font gameTitleFont;                     //Brick Breaker
+    private Font creditsFont;                       //version 0.2
+    private Font buttonFont;                        //Button text font
 
     private GameFrame owner;
 
-    private boolean startClicked;
-    private boolean menuClicked;
+    private int strLen=0;
 
+    //Click confirmation
+    private boolean backClicked;
+    private boolean startClicked;
+    private boolean exitClicked;
+    private boolean tutorialClicked;
 
     public HomeMenu(GameFrame owner,Dimension area){
 
@@ -72,25 +94,24 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
         this.owner = owner;
 
-
-
         menuFace = new Rectangle(new Point(0,0),area);
         this.setPreferredSize(area);
 
+        //Setting Button Dimensions
         Dimension btnDim = new Dimension(area.width / 3, area.height / 12);
         startButton = new Rectangle(btnDim);
-        menuButton = new Rectangle(btnDim);
+        exitButton = new Rectangle(btnDim);
+        tutorialButton = new Rectangle(btnDim);
+        backButton = new Rectangle(btnDim);
 
-        borderStoke = new BasicStroke(BORDER_SIZE,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND,0,DASHES,0);
-        borderStoke_noDashes = new BasicStroke(BORDER_SIZE,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND);
+        borderStroke = new BasicStroke(BORDER_SIZE,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND,0,DASHES,0);
+        borderStroke_noDashes = new BasicStroke(BORDER_SIZE,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND);
 
+        //Setting Fonts
         greetingsFont = new Font("Noto Mono",Font.PLAIN,25);
         gameTitleFont = new Font("Noto Mono",Font.BOLD,40);
         creditsFont = new Font("Monospaced",Font.PLAIN,10);
         buttonFont = new Font("Monospaced",Font.PLAIN,startButton.height-2);
-
-
-
     }
 
 
@@ -100,30 +121,52 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
 
     public void drawMenu(Graphics2D g2d){
+        if (showTutorial) {
+            Font tmpFont = g2d.getFont();
+            Color tmpColor = g2d.getColor();
 
-        drawContainer(g2d);
+            g2d.setFont(gameTitleFont);
+            g2d.setColor(TEXT_COLOR);
 
-        /*
-        all the following method calls need a relative
-        painting directly into the HomeMenu rectangle,
-        so the translation is made here so the other methods do not do that.
-         */
-        Color prevColor = g2d.getColor();
-        Font prevFont = g2d.getFont();
+            if (strLen == 0) {
+                FontRenderContext frc = g2d.getFontRenderContext();
+                strLen = gameTitleFont.getStringBounds(TUTORIAL_TEXT, frc).getBounds().width;
+            }
 
-        double x = menuFace.getX();
-        double y = menuFace.getY();
+            int x = (this.getWidth() - strLen) / 2;
+            int y = this.getHeight() / 10 +20;
 
-        g2d.translate(x,y);
+            g2d.drawString(TUTORIAL_TEXT, x, y);
+            drawButton(g2d);
 
-        //methods calls
-        drawText(g2d);
-        drawButton(g2d);
-        //end of methods calls
+            g2d.setFont(tmpFont);
+            g2d.setColor(tmpColor);
+        }
+        else
+        {
+            drawContainer(g2d);
+            Color prevColor = g2d.getColor();
+            Font prevFont = g2d.getFont();
 
-        g2d.translate(-x,-y);
-        g2d.setFont(prevFont);
-        g2d.setColor(prevColor);
+            double x = menuFace.getX();
+            double y = menuFace.getY();
+
+            g2d.translate(x,y);
+            /*
+            all the following method calls need a relative
+            painting directly into the HomeMenu rectangle,
+            so the translation is made here so the other methods do not do that.
+             */
+
+            //methods calls
+            drawText(g2d);
+            drawButton(g2d);
+            //end of methods calls
+
+            g2d.translate(-x,-y);
+            g2d.setFont(prevFont);
+            g2d.setColor(prevColor);
+        }
     }
 
     private void drawContainer(Graphics2D g2d){
@@ -131,17 +174,27 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
         g2d.fill(menuFace);
 
-        //adding background image
-        Image picture = Toolkit.getDefaultToolkit().getImage("images/start-bg.jpg");
-        g2d.drawImage(picture, 0, 0, this);
+        if(showTutorial)
+        {
+            //adding background image
+            Image picture = Toolkit.getDefaultToolkit().getImage("images/tutorial-bg.jpg");
+            g2d.drawImage(picture, 0, 0, this);
+        }
+        else
+        {
+            //adding background image
+            Image picture = Toolkit.getDefaultToolkit().getImage("images/start-bg.jpg");
+            g2d.drawImage(picture, 0, 0, this);
+        }
+
 
         Stroke tmp = g2d.getStroke();
 
-        g2d.setStroke(borderStoke_noDashes);
+        g2d.setStroke(borderStroke_noDashes);
         g2d.setColor(DASH_BORDER_COLOR);
         g2d.draw(menuFace);
 
-        g2d.setStroke(borderStoke);
+        g2d.setStroke(borderStroke);
         g2d.setColor(BORDER_COLOR);
         g2d.draw(menuFace);
 
@@ -179,8 +232,6 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
         g2d.setFont(creditsFont);
         g2d.drawString(CREDITS,sX,sY);
-
-
     }
 
     private void drawButton(Graphics2D g2d){
@@ -188,67 +239,114 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
         FontRenderContext frc = g2d.getFontRenderContext();
 
         Rectangle2D txtRect = buttonFont.getStringBounds(START_TEXT,frc);
-        Rectangle2D mTxtRect = buttonFont.getStringBounds(MENU_TEXT,frc);
+        Rectangle2D mTxtRect = buttonFont.getStringBounds(EXIT_TEXT,frc);
+        Rectangle2D tTxtRect = buttonFont.getStringBounds(TUTORIAL_TEXT,frc);
+        Rectangle2D bTxtRect = buttonFont.getStringBounds(BACK,frc);
 
         g2d.setFont(buttonFont);
 
-        int x = (menuFace.width - startButton.width) / 2;
-        int y =(int) ((menuFace.height - startButton.height) * 0.8);
+        if(showTutorial) {
+            int x = (menuFace.width - backButton.width) - 10;
+            int y = (menuFace.height - backButton.height) -10;
 
-        startButton.setLocation(x,y);
+            backButton.setLocation(x, y);
 
-        x = (int)(startButton.getWidth() - txtRect.getWidth()) / 2;
-        y = (int)(startButton.getHeight() - txtRect.getHeight()) / 2;
+            x = (int) (backButton.getWidth() - txtRect.getWidth()) / 2;
+            y = (int) (backButton.getHeight() - txtRect.getHeight()) / 2;
 
-        x += startButton.x;
-        y += startButton.y + (startButton.height * 0.9);
+            x += backButton.x;
+            y += backButton.y + (backButton.height * 0.9);
 
-
-
-
-        if(startClicked){
-            Color tmp = g2d.getColor();
-            g2d.setColor(CLICKED_BUTTON_COLOR);
-            g2d.draw(startButton);
-            g2d.setColor(CLICKED_TEXT);
-            g2d.drawString(START_TEXT,x,y);
-            g2d.setColor(tmp);
+            if (backClicked) {
+                Color tmp = g2d.getColor();
+                g2d.setColor(CLICKED_BUTTON_COLOR);
+                g2d.draw(backButton);
+                g2d.setColor(CLICKED_TEXT);
+                g2d.drawString(BACK, x, y);
+                g2d.setColor(tmp);
+            } else {
+                g2d.draw(backButton);
+                g2d.drawString(BACK, x, y);
+            }
         }
-        else{
-            g2d.draw(startButton);
-            g2d.drawString(START_TEXT,x,y);
+        else
+        {
+            int x = (menuFace.width - startButton.width) / 2;
+            int y =(int) ((menuFace.height - startButton.height) * 0.6);
+
+            startButton.setLocation(x,y);
+
+            x = (int)(startButton.getWidth() - bTxtRect.getWidth()) / 2;
+            y = (int)(startButton.getHeight() - bTxtRect.getHeight()) / 2;
+
+            x += startButton.x;
+            y += startButton.y + (startButton.height * 0.9);
+
+            if(startClicked){
+                Color tmp = g2d.getColor();
+                g2d.setColor(CLICKED_BUTTON_COLOR);
+                g2d.draw(startButton);
+                g2d.setColor(CLICKED_TEXT);
+                g2d.drawString(START_TEXT,x,y);
+                g2d.setColor(tmp);
+            }
+            else{
+                g2d.draw(startButton);
+                g2d.drawString(START_TEXT,x,y);
+            }
+
+            x = startButton.x;
+            y = startButton.y + 40;
+
+            tutorialButton.setLocation(x,y);
+
+            x = (int)(tutorialButton.getWidth() - tTxtRect.getWidth()) / 2;
+            y = (int)(tutorialButton.getHeight() - tTxtRect.getHeight()) / 2;
+
+            x += tutorialButton.x;
+            y += tutorialButton.y + (startButton.height * 0.9);
+
+            if(tutorialClicked){
+                Color tmp = g2d.getColor();
+
+                g2d.setColor(CLICKED_BUTTON_COLOR);
+                g2d.draw(tutorialButton);
+                g2d.setColor(CLICKED_TEXT);
+                g2d.drawString(TUTORIAL_TEXT,x,y);
+                g2d.setColor(tmp);
+
+                showTutorial= !showTutorial;
+            }
+            else{
+                g2d.draw(tutorialButton);
+                g2d.drawString(TUTORIAL_TEXT,x,y);
+            }
+
+            x = tutorialButton.x;
+            y = tutorialButton.y + 40;
+
+            exitButton.setLocation(x,y);
+
+            x = (int)(exitButton.getWidth() - mTxtRect.getWidth()) / 2;
+            y = (int)(exitButton.getHeight() - mTxtRect.getHeight()) / 2;
+
+            x += exitButton.x;
+            y += exitButton.y + (startButton.height * 0.9);
+
+            if(exitClicked){
+                Color tmp = g2d.getColor();
+
+                g2d.setColor(CLICKED_BUTTON_COLOR);
+                g2d.draw(exitButton);
+                g2d.setColor(CLICKED_TEXT);
+                g2d.drawString(EXIT_TEXT,x,y);
+                g2d.setColor(tmp);
+            }
+            else{
+                g2d.draw(exitButton);
+                g2d.drawString(EXIT_TEXT,x,y);
+            }
         }
-
-        x = startButton.x;
-        y = startButton.y;
-
-        y *= 1.2;
-
-        menuButton.setLocation(x,y);
-
-
-
-
-        x = (int)(menuButton.getWidth() - mTxtRect.getWidth()) / 2;
-        y = (int)(menuButton.getHeight() - mTxtRect.getHeight()) / 2;
-
-        x += menuButton.x;
-        y += menuButton.y + (startButton.height * 0.9);
-
-        if(menuClicked){
-            Color tmp = g2d.getColor();
-
-            g2d.setColor(CLICKED_BUTTON_COLOR);
-            g2d.draw(menuButton);
-            g2d.setColor(CLICKED_TEXT);
-            g2d.drawString(MENU_TEXT,x,y);
-            g2d.setColor(tmp);
-        }
-        else{
-            g2d.draw(menuButton);
-            g2d.drawString(MENU_TEXT,x,y);
-        }
-
     }
 
     @Override
@@ -256,11 +354,20 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
         Point p = mouseEvent.getPoint();
         if(startButton.contains(p)){
            owner.enableGameBoard();
-
         }
-        else if(menuButton.contains(p)){
+        else if(exitButton.contains(p)){
             System.out.println("Goodbye " + System.getProperty("user.name"));
             System.exit(0);
+        }
+        else if(tutorialButton.contains(p)){
+            tutorialClicked = true;
+            showTutorial = true;
+            repaint();
+        }
+        else if(backButton.contains(p)){
+            backClicked = true;
+            showTutorial = false;
+            repaint();
         }
     }
 
@@ -272,9 +379,9 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
             repaint(startButton.x,startButton.y,startButton.width+1,startButton.height+1);
 
         }
-        else if(menuButton.contains(p)){
-            menuClicked = true;
-            repaint(menuButton.x,menuButton.y,menuButton.width+1,menuButton.height+1);
+        else if(exitButton.contains(p)){
+            exitClicked = true;
+            repaint(exitButton.x, exitButton.y, exitButton.width+1, exitButton.height+1);
         }
     }
 
@@ -284,9 +391,17 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
             startClicked = false;
             repaint(startButton.x,startButton.y,startButton.width+1,startButton.height+1);
         }
-        else if(menuClicked){
-            menuClicked = false;
-            repaint(menuButton.x,menuButton.y,menuButton.width+1,menuButton.height+1);
+        else if(exitClicked){
+            exitClicked = false;
+            repaint(exitButton.x, exitButton.y, exitButton.width+1, exitButton.height+1);
+        }
+        else if(tutorialClicked){
+            tutorialClicked = false;
+            repaint(tutorialButton.x, tutorialButton.y, tutorialButton.width+1, tutorialButton.height+1);
+        }
+        else if(backClicked){
+            backClicked = false;
+            repaint(backButton.x, backButton.y, backButton.width+1, backButton.height+1);
         }
     }
 
@@ -309,7 +424,7 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
     @Override
     public void mouseMoved(MouseEvent mouseEvent) {
         Point p = mouseEvent.getPoint();
-        if(startButton.contains(p) || menuButton.contains(p))
+        if(startButton.contains(p) || exitButton.contains(p)|| tutorialButton.contains(p)||backButton.contains(p))
             this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         else
             this.setCursor(Cursor.getDefaultCursor());
