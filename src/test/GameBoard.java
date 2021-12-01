@@ -24,7 +24,6 @@ import java.awt.font.FontRenderContext;
 
 
 public class GameBoard extends JComponent implements KeyListener,MouseListener,MouseMotionListener {
-
     //Text in Pause Menu
     private static final String CONTINUE = "Continue";
     private static final String RESTART = "Restart";
@@ -127,10 +126,6 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         this.addKeyListener(this);
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
-    }
-
-    public void musicPlay(){
-
     }
 
     public void paint(Graphics g){
