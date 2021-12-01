@@ -30,6 +30,9 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
     private JukeBox JukeBox = new JukeBox();
     JukeBox.loadAudio("audio/bgm-start.mp3" "Music1");
 
+    //Load Music
+    SoundPlayer.load("/audio/bgm-start.mp3","music1");
+
     //Start Menu Text
     private static final String GREETINGS = "Welcome to:";
     private static final String GAME_TITLE = "Brick Destroy";
