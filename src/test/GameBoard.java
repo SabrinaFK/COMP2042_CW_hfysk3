@@ -21,7 +21,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.FontRenderContext;
-import java.awt.geom.Rectangle2D;
 
 
 public class GameBoard extends JComponent implements KeyListener,MouseListener,MouseMotionListener {
@@ -68,7 +67,6 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
 
     public GameBoard(JFrame owner){
         super();
-
         strLen = 0;
         showPauseMenu = false;
 
@@ -80,7 +78,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         wall = new Wall(new Rectangle(0,0,DEF_WIDTH,DEF_HEIGHT),30,3,6/2,new Point(300,430));
 
         debugConsole = new DebugConsole(owner,wall,this);
-        //initialize the first level
+        //init the first level
         wall.nextLevel();
 
         gameTimer = new Timer(10,e ->{

@@ -25,8 +25,10 @@ import java.awt.event.MouseMotionListener;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
-
 public class HomeMenu extends JComponent implements MouseListener, MouseMotionListener {
+    //Load Audio
+    private JukeBox JukeBox = new JukeBox();
+    JukeBox.loadAudio("audio/bgm-start.mp3" "Music1");
 
     //Start Menu Text
     private static final String GREETINGS = "Welcome to:";
