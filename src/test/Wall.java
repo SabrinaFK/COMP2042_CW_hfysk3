@@ -23,6 +23,11 @@ import java.util.Random;
 
 
 public class Wall {
+    //Loading Audio
+    //Audio taken from https://freesound.org/people/jalastram/packs/21727/
+    private AudioPlayer sfx1 = new AudioPlayer("audio/bounce.wav");
+    //Audio taken from https://mixkit.co
+    private AudioPlayer sfx2 = new AudioPlayer("audio/hit-brick.wav");
 
     private static final int LEVELS_COUNT = 4;
 
@@ -181,6 +186,7 @@ public class Wall {
     public void findImpacts(){
         if(player.impact(ball)){
             ball.reverseY();
+            sfx1.play();
         }
         else if(impactWall()){
             /*for efficiency reverse is done into method impactWall
@@ -190,9 +196,11 @@ public class Wall {
         }
         else if(impactBorder()) {
             ball.reverseX();
+            sfx1.play();
         }
         else if(ball.getPosition().getY() < area.getY()){
             ball.reverseY();
+            sfx1.play();
         }
         else if(ball.getPosition().getY() > area.getY() + area.getHeight()){
             ballCount--;
@@ -208,20 +216,24 @@ public class Wall {
                 case Brick.UP_IMPACT:
                     ball.reverseY();
                     playerScore+=100;
+                    sfx2.play();
                     return b.setImpact(ball.down, Brick.Crack.UP);
                 case Brick.DOWN_IMPACT:
                     ball.reverseY();
                     playerScore+=100;
+                    sfx2.play();
                     return b.setImpact(ball.up,Brick.Crack.DOWN);
 
                 //Horizontal Impact
                 case Brick.LEFT_IMPACT:
                     ball.reverseX();
                     playerScore+=100;
+                    sfx2.play();
                     return b.setImpact(ball.right,Brick.Crack.RIGHT);
                 case Brick.RIGHT_IMPACT:
                     ball.reverseX();
                     playerScore+=100;
+                    sfx2.play();
                     return b.setImpact(ball.left,Brick.Crack.LEFT);
             }
         }
