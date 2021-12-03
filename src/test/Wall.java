@@ -24,10 +24,12 @@ import java.util.Random;
 
 public class Wall {
     //Loading Audio
-    //Audio taken from https://freesound.org/people/jalastram/packs/21727/
-    private AudioPlayer sfx1 = new AudioPlayer("audio/bounce.wav");
-    //Audio taken from https://mixkit.co
-    private AudioPlayer sfx2 = new AudioPlayer("audio/hit-brick.wav");
+        //Audio taken from https://freesound.org/people/jalastram/packs/21727/
+        private AudioPlayer sfx1 = new AudioPlayer("audio/sfx-bounce.wav");
+
+        //Audio taken from https://mixkit.co
+        private AudioPlayer sfx2 = new AudioPlayer("audio/sfx-hit-brick.wav");
+        private AudioPlayer sfx3 = new AudioPlayer("audio/sfx-ball-lost.wav");
 
     private static final int LEVELS_COUNT = 4;
 
@@ -50,6 +52,7 @@ public class Wall {
     private int ballCount;
     private int playerScore;
     private boolean ballLost;
+    private boolean mute;
 
     public Wall(Rectangle drawArea, int brickCount, int lineCount, double brickDimensionRatio, Point ballPos){
         this.startPoint = new Point(ballPos);
@@ -186,7 +189,8 @@ public class Wall {
     public void findImpacts(){
         if(player.impact(ball)){
             ball.reverseY();
-            sfx1.play();
+            if (mute==false)
+                sfx1.play();
         }
         else if(impactWall()){
             /*for efficiency reverse is done into method impactWall
@@ -196,16 +200,20 @@ public class Wall {
         }
         else if(impactBorder()) {
             ball.reverseX();
-            sfx1.play();
+            if (mute==false)
+                sfx1.play();
         }
         else if(ball.getPosition().getY() < area.getY()){
             ball.reverseY();
-            sfx1.play();
+            if (mute==false)
+                sfx1.play();
         }
         else if(ball.getPosition().getY() > area.getY() + area.getHeight()){
             ballCount--;
             playerScore-=100;
             ballLost = true;
+            if (mute==false)
+                sfx3.play();
         }
     }
 
@@ -216,24 +224,28 @@ public class Wall {
                 case Brick.UP_IMPACT:
                     ball.reverseY();
                     playerScore+=100;
-                    sfx2.play();
+                    if (mute==false)
+                        sfx2.play();
                     return b.setImpact(ball.down, Brick.Crack.UP);
                 case Brick.DOWN_IMPACT:
                     ball.reverseY();
                     playerScore+=100;
-                    sfx2.play();
+                    if (mute==false)
+                        sfx2.play();
                     return b.setImpact(ball.up,Brick.Crack.DOWN);
 
                 //Horizontal Impact
                 case Brick.LEFT_IMPACT:
                     ball.reverseX();
                     playerScore+=100;
-                    sfx2.play();
+                    if (mute==false)
+                        sfx2.play();
                     return b.setImpact(ball.right,Brick.Crack.RIGHT);
                 case Brick.RIGHT_IMPACT:
                     ball.reverseX();
                     playerScore+=100;
-                    sfx2.play();
+                    if (mute==false)
+                        sfx2.play();
                     return b.setImpact(ball.left,Brick.Crack.LEFT);
             }
         }
@@ -255,6 +267,8 @@ public class Wall {
 
     public int getPlayerScore(){return playerScore;}
     public void setPlayerScore(int num){playerScore=num;}
+
+    public boolean setMute(boolean mute){return this.mute=mute;}
 
     public boolean isBallLost(){
         return ballLost;

@@ -27,14 +27,12 @@ public class GameFrame extends JFrame implements WindowFocusListener {
 
     private static final String DEF_TITLE = "Brick Destroy";
 
-    //Loading Audio
-    //Audio taken from https://sourceforge.net/projects/tlk-brickbreaker/files/Brick%20Breaker/MP3%20Files/
-    private AudioPlayer gameAudio = new AudioPlayer("audio/bgm-lvl.wav");
-
     private GameBoard gameBoard;
     private HomeMenu homeMenu;
 
     private boolean gaming;
+
+    public boolean setGaming(boolean bool){return gaming=bool;}
 
     public GameFrame(){
         super();
@@ -70,10 +68,16 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         initialize();
         /*to avoid problems with graphics focus controller is added here*/
         this.addWindowFocusListener(this);
-        //loading audio
-        gameAudio.play();
-        gameAudio.loop();
+    }
 
+    public void disableGameBoard(){
+        this.dispose();
+        this.remove(gameBoard);
+        this.add(homeMenu,BorderLayout.CENTER);
+        this.setUndecorated(true);
+        initialize();
+        /*to avoid problems with graphics focus controller is added here*/
+        this.addWindowFocusListener(this);
     }
 
     private void autoLocate(){

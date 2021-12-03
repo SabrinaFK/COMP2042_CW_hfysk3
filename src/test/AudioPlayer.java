@@ -5,8 +5,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 public class AudioPlayer {
-    private boolean playAudio;
+    public boolean muteAudio;               //Indicates if audio is muted / unmuted
     private Clip clip;
+
     public AudioPlayer(String fileName) {
         // specify the sound to play
         // (assuming the sound can be played by the audio system)
@@ -43,13 +44,16 @@ public class AudioPlayer {
         // play, stop, loop the sound clip
     }
     public void play(){
-        clip.setFramePosition(0);  // Must always rewind!
-        clip.start();
+        if (muteAudio == false){
+            clip.setFramePosition(0);  // Must always rewind!
+            clip.start();
+        }
     }
     public void loop(){
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
+        if (muteAudio == false)
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
     public void stop(){
-        clip.close();
+        clip.stop();
     }
 }

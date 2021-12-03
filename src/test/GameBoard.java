@@ -25,9 +25,11 @@ import java.awt.font.FontRenderContext;
 
 public class GameBoard extends JComponent implements KeyListener,MouseListener,MouseMotionListener {
     //Text in Pause Menu
-    private static final String CONTINUE = "Continue";
-    private static final String RESTART = "Restart";
-    private static final String EXIT = "Exit";
+    private static final String CONTINUE = "Continue";      //Text on Continue Button
+    private static final String RESTART = "Restart";        //Text on Restart Button
+    private String MUTE = "Mute";                           //Text on Mute / Unmute Button
+    private static final String HOME = "Home";              //Text on Home Button
+    private static final String EXIT = "Exit";              //Exit Button
     private static final String PAUSE = "Pause Menu";
 
     //Format for Pause Menu
@@ -44,22 +46,32 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
 
     private String message1;                //Top Text on the center of level
     private String message2;                //Lower Text on the center of level
-    private String MUTE = "Mute";           //Text on Mute / Unmute Button
 
-    private boolean showPauseMenu;          //indicates if pause menu is visible or not
-    private boolean muteAudio;              //Indicates if audio is muted / unmuted
+    private boolean mute;                   //indicates if audio is muted/not
+    private boolean showPauseMenu;          //indicates if pause menu is visible / not
+    private boolean lvlAudioPlaying;        //indicates if lvl audio is playing / not
 
     private Font menuFont;
 
     //Pause Menu Buttons
     private Rectangle continueButtonRect;
-    private Rectangle exitButtonRect;
     private Rectangle restartButtonRect;
-    private Rectangle muteButton;
+    private Rectangle homeButtonRect;
+    private Rectangle muteButtonRect;
+    private Rectangle exitButtonRect;
 
     private Rectangle scoreBoard;
 
     private int strLen;
+    //Loading Audio
+        //Audio taken from https://www.youtube.com/watch?v=j29TCZYJgWA - Game Over by MB Music
+        private AudioPlayer gameOver = new AudioPlayer("audio/bgm-game-over.wav");
+        //Audio taken from https://www.youtube.com/watch?v=br3OzOrARh4 - 8-bit Win by Heatley Bros
+        private AudioPlayer win = new AudioPlayer("audio/bgm-win.wav");
+        //Audio taken from https://mixkit.co
+        private AudioPlayer sfx = new AudioPlayer("audio/sfx-next-lvl.wav");
+        //Audio taken from https://sourceforge.net/projects/tlk-brickbreaker/files/Brick%20Breaker/MP3%20Files/
+        private AudioPlayer gameAudio = new AudioPlayer("audio/bgm-lvl.wav");
 
     private DebugConsole debugConsole;
     public GameBoard(JFrame owner){
@@ -77,15 +89,19 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         debugConsole = new DebugConsole(owner,wall,this);
         //init the first level
         wall.nextLevel();
-
         gameTimer = new Timer(10,e ->{
             wall.move();
             wall.findImpacts();
             message1 = String.format("Bricks: %d Balls: %d",wall.getBrickCount(),wall.getBallCount());
             message2 = String.format("Player Score: %d",wall.getPlayerScore());
+
             if(wall.isBallLost()){
                 if(wall.ballEnd()){
                     wall.wallReset();
+                    gameAudio.stop();
+                    gameOver.play();
+                    gameOver.loop();
+                    lvlAudioPlaying=false;
                     message1 = String.format("Game Over");
                     message2 = String.format("Player Score: %d",wall.getPlayerScore());
                     wall.setPlayerScore(0);
@@ -98,12 +114,19 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
                 if(wall.hasLevel()){
                     message1 = "Going to Next Level";
                     message2 = "";
+
+                    sfx.play();
                     gameTimer.stop();
                     wall.ballReset();
                     wall.wallReset();
                     wall.nextLevel();
                 }
                 else{
+
+                    gameAudio.stop();
+                    win.play();
+                    win.loop();
+
                     message1 = "GREAT JOB!";
                     message2 = "ALL WALLS DESTROYED";
                     gameTimer.stop();
@@ -115,8 +138,6 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
 
     }
 
-
-
     private void initialize(){
         this.setPreferredSize(new Dimension(DEF_WIDTH,DEF_HEIGHT));
         this.setFocusable(true);
@@ -127,6 +148,27 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     }
 
     public void paint(Graphics g){
+        if (lvlAudioPlaying==false)
+        {
+            gameOver.stop();
+            gameAudio.play();
+            gameAudio.loop();
+            lvlAudioPlaying=true;
+        }
+        if (mute){
+            gameAudio.stop();
+            gameOver.stop();
+            win.stop();
+            lvlAudioPlaying=false;
+            muteAudio(true);
+            MUTE = "Unmute";
+        }
+        else
+        {
+            muteAudio(false);
+            MUTE = "Mute";
+        }
+
         Graphics2D g2d = (Graphics2D) g;
 
         clear(g2d);
@@ -235,7 +277,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         g2d.drawString(PAUSE,x,y);
 
         x = this.getWidth() / 8;
-        y = this.getHeight() / 5;
+        y = this.getHeight() / 4;
 
 
         if(continueButtonRect == null){
@@ -246,7 +288,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
 
         g2d.drawString(CONTINUE,x,y);
 
-        y *= 2;
+        y += 60;
 
         if(restartButtonRect == null){
             restartButtonRect = (Rectangle) continueButtonRect.clone();
@@ -255,7 +297,24 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
 
         g2d.drawString(RESTART,x,y);
 
-        y *= 1.5;
+        y += 60;
+        if(muteButtonRect == null){
+            muteButtonRect = (Rectangle) continueButtonRect.clone();
+            muteButtonRect.setLocation(x,y- muteButtonRect.height);
+        }
+
+        g2d.drawString(MUTE,x,y);
+
+        y += 60;
+
+        if(homeButtonRect == null){
+            homeButtonRect = (Rectangle) continueButtonRect.clone();
+            homeButtonRect.setLocation(x,y-homeButtonRect.height);
+        }
+
+        g2d.drawString(HOME,x,y);
+
+        y += 60;
 
         if(exitButtonRect == null){
             exitButtonRect = (Rectangle) continueButtonRect.clone();
@@ -263,15 +322,6 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         }
 
         g2d.drawString(EXIT,x,y);
-
-        y *= 1.35;
-
-        if(muteButton == null){
-            muteButton = (Rectangle) continueButtonRect.clone();
-            muteButton.setLocation(x,y-muteButton.height);
-        }
-
-        g2d.drawString(MUTE,x,y);
 
         g2d.setFont(tmpFont);
         g2d.setColor(tmpColor);
@@ -336,19 +386,6 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         if(!showPauseMenu)
             return;
 
-        if(muteButton.contains(p)){
-            muteAudio= !muteAudio;
-            if (muteAudio==true)
-            {
-                MUTE = "Unmute";
-            }
-            else
-            {
-                MUTE = "Mute";
-            }
-            repaint();
-        }
-
         if(continueButtonRect.contains(p)){
             showPauseMenu = false;
             repaint();
@@ -363,12 +400,37 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
             showPauseMenu = false;
             repaint();
         }
+        else if (homeButtonRect.contains(p)){
+        }
+        else if(muteButtonRect.contains(p)){
+            mute=!mute;
+            gameAudio.muteAudio= !gameAudio.muteAudio;
+            gameOver.muteAudio= !gameOver.muteAudio;
+            sfx.muteAudio= !sfx.muteAudio;
+            win.muteAudio= !win.muteAudio;
+            repaint();
+        }
         else if(exitButtonRect.contains(p)){
             System.exit(0);
         }
 
     }
-
+    public void muteAudio (boolean mute){
+        if(mute){
+            wall.setMute(true);
+            gameAudio.muteAudio= true;
+            gameOver.muteAudio= true;
+            sfx.muteAudio= true;
+            win.muteAudio= true;
+        }
+        else {
+            wall.setMute(false);
+            gameAudio.muteAudio= false;
+            gameOver.muteAudio= false;
+            sfx.muteAudio= false;
+            win.muteAudio= false;
+        }
+    }
     @Override
     public void mousePressed(MouseEvent mouseEvent) {
 
@@ -398,7 +460,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     public void mouseMoved(MouseEvent mouseEvent) {
         Point p = mouseEvent.getPoint();
         if(exitButtonRect != null && showPauseMenu) {
-            if (exitButtonRect.contains(p) || continueButtonRect.contains(p) || restartButtonRect.contains(p) || muteButton.contains(p))
+            if (exitButtonRect.contains(p) || continueButtonRect.contains(p) || restartButtonRect.contains(p) || muteButtonRect.contains(p)|| homeButtonRect.contains(p))
                 this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             else
                 this.setCursor(Cursor.getDefaultCursor());
