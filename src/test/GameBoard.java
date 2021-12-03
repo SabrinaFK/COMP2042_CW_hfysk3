@@ -62,8 +62,6 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     private int strLen;
 
     private DebugConsole debugConsole;
-
-
     public GameBoard(JFrame owner){
         super();
         strLen = 0;

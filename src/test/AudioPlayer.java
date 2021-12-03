@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 public class AudioPlayer {
+    private boolean playAudio;
     private Clip clip;
     public AudioPlayer(String fileName) {
         // specify the sound to play
@@ -49,6 +50,6 @@ public class AudioPlayer {
         clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
     public void stop(){
-        clip.stop();
+        clip.close();
     }
 }

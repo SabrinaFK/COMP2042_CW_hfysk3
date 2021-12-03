@@ -82,10 +82,14 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
     private boolean exitClicked;
     private boolean tutorialClicked;
 
+    //loading audio
+    //Audio taken from https://sourceforge.net/projects/tlk-brickbreaker/files/Brick%20Breaker/MP3%20Files/
+    private AudioPlayer audio = new AudioPlayer("audio/bgm-start.wav");
+
     public HomeMenu(GameFrame owner,Dimension area){
-        AudioPlayer audio = new AudioPlayer("audio/bgm-lvl1.wav");
-        audio.loop();
+        //starting audio & looping it
         audio.play();
+        audio.loop();
 
         this.setFocusable(true);
         this.requestFocusInWindow();
@@ -373,6 +377,7 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
         Point p = mouseEvent.getPoint();
         if(startButton.contains(p)){
             startClicked = true;
+            audio.stop();
             repaint(startButton.x,startButton.y,startButton.width+1,startButton.height+1);
 
         }

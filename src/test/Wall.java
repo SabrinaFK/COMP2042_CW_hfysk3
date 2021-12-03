@@ -47,7 +47,6 @@ public class Wall {
     private boolean ballLost;
 
     public Wall(Rectangle drawArea, int brickCount, int lineCount, double brickDimensionRatio, Point ballPos){
-
         this.startPoint = new Point(ballPos);
 
         levels = makeLevels(drawArea,brickCount,lineCount,brickDimensionRatio);
@@ -272,9 +271,7 @@ public class Wall {
         ballCount = 3;
     }
 
-    public boolean ballEnd(){
-        return ballCount == 0;
-    }
+    public boolean ballEnd(){return ballCount == 0;}
 
     public boolean isDone(){
         return brickCount == 0;
