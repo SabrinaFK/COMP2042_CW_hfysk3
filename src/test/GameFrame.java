@@ -29,10 +29,16 @@ public class GameFrame extends JFrame implements WindowFocusListener {
 
     private GameBoard gameBoard;
     private HomeMenu homeMenu;
+    private Tutorial tutorial;
+    private Leaderboard leaderboard;
+    private GameOver gameOver;
+
+    //Audio taken from https://www.youtube.com/watch?v=j29TCZYJgWA - Game Over by MB Music
+    private AudioPlayer gameOverAudio = new AudioPlayer("audio/bgm-game-over.wav");
 
     private boolean gaming;
 
-    public boolean setGaming(boolean bool){return gaming=bool;}
+    private int score;
 
     public GameFrame(){
         super();
@@ -44,6 +50,12 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         gameBoard = new GameBoard(this);
 
         homeMenu = new HomeMenu(this,new Dimension(450,300));
+
+        tutorial = new Tutorial(this,new Dimension(450,300));
+
+        leaderboard = new Leaderboard(this,new Dimension(450,300));
+
+        gameOver = new GameOver(this, new Dimension(450, 300));
 
         this.add(homeMenu,BorderLayout.CENTER);
 
@@ -59,6 +71,7 @@ public class GameFrame extends JFrame implements WindowFocusListener {
     }
 
     public void enableGameBoard(){
+        gameOverAudio.stop();
         this.dispose();
         this.remove(homeMenu);
         this.add(gameBoard,BorderLayout.CENTER);
@@ -78,8 +91,94 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         /*to avoid problems with graphics focus controller is added here*/
         this.addWindowFocusListener(this);
         homeMenu.setMute(gameBoard.getMute());
-
     }
+
+    public void enableTutorial(){
+        this.dispose();
+        this.remove(homeMenu);
+        this.add(tutorial,BorderLayout.CENTER);
+        this.setUndecorated(true);
+        initialize();
+        /*to avoid problems with graphics focus controller is added here*/
+        this.addWindowFocusListener(this);
+    }
+    public void disableTutorial(){
+        this.dispose();
+        this.remove(tutorial);
+        this.add(homeMenu,BorderLayout.CENTER);
+        this.setUndecorated(true);
+        initialize();
+        /*to avoid problems with graphics focus controller is added here*/
+        this.addWindowFocusListener(this);
+    }
+
+    public void enableGameOver(){
+        if (!gameBoard.getMute()){
+            gameOverAudio.play();
+            gameOverAudio.loop();
+        }
+        this.dispose();
+        this.remove(gameBoard);
+        this.add(gameOver,BorderLayout.CENTER);
+        this.setUndecorated(true);
+        initialize();
+        /*to avoid problems with graphics focus controller is added here*/
+        this.addWindowFocusListener(this);
+    }
+    public void disableGameOver(){
+        this.dispose();
+        this.remove(gameOver);
+    }
+
+    public void enableLeaderboard(boolean fromTutorial){
+        if (!fromTutorial)
+        {
+            this.dispose();
+            this.remove(gameOver);
+            this.add(leaderboard,BorderLayout.CENTER);
+            this.setUndecorated(true);
+            initialize();
+            /*to avoid problems with graphics focus controller is added here*/
+            this.addWindowFocusListener(this);
+        }
+        else {
+            this.dispose();
+            this.remove(tutorial);
+            this.add(leaderboard,BorderLayout.CENTER);
+            leaderboard.setFromTutorial(false);
+            this.setUndecorated(true);
+            initialize();
+            /*to avoid problems with graphics focus controller is added here*/
+            this.addWindowFocusListener(this);
+        }
+    }
+
+    public void disableLeaderboard(boolean fromTutorial){
+        if (fromTutorial)
+        {
+            this.dispose();
+            this.remove(leaderboard);
+            this.add(tutorial,BorderLayout.CENTER);
+            this.setUndecorated(true);
+            initialize();
+            /*to avoid problems with graphics focus controller is added here*/
+            this.addWindowFocusListener(this);
+        }
+        else {
+            this.dispose();
+            this.remove(leaderboard);
+            this.add(homeMenu,BorderLayout.CENTER);
+            this.setUndecorated(true);
+            initialize();
+            /*to avoid problems with graphics focus controller is added here*/
+            this.addWindowFocusListener(this);
+            gameOverAudio.stop();
+            homeMenu.setMute(gameBoard.getMute());
+        }
+    }
+
+    public void setScore(int score) {this.score = score;}
+    public int getScore(){return score;}
 
     private void autoLocate(){
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();

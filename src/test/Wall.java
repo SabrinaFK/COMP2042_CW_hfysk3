@@ -307,6 +307,11 @@ public class Wall {
         return brickCount == 0;
     }
 
+    public void resetLevels (){
+        bricks = levels[0];
+        this.brickCount = bricks.length;
+    }
+
     public void nextLevel(){
         bricks = levels[level++];
         this.brickCount = bricks.length;
