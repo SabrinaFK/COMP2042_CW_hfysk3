@@ -1,4 +1,5 @@
 package test;
+
 import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
@@ -44,13 +45,13 @@ public class AudioPlayer {
         // play, stop, loop the sound clip
     }
     public void play(){
-        if (muteAudio == false){
+        if (!muteAudio){
             clip.setFramePosition(0);  // Must always rewind!
             clip.start();
         }
     }
     public void loop(){
-        if (muteAudio == false)
+        if (!muteAudio)
             clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
     public void stop(){

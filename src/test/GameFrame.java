@@ -48,8 +48,6 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         this.add(homeMenu,BorderLayout.CENTER);
 
         this.setUndecorated(true);
-
-
     }
 
     public void initialize(){

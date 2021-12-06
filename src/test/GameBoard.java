@@ -63,6 +63,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     private Rectangle scoreBoard;
 
     private int strLen;
+
     //Loading Audio
         //Audio taken from https://www.youtube.com/watch?v=j29TCZYJgWA - Game Over by MB Music
         private AudioPlayer gameOver = new AudioPlayer("audio/bgm-game-over.wav");
@@ -148,7 +149,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     }
 
     public void paint(Graphics g){
-        if (lvlAudioPlaying==false)
+        if (!lvlAudioPlaying)
         {
             gameOver.stop();
             gameAudio.play();
