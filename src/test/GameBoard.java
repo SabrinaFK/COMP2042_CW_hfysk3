@@ -327,6 +327,25 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         g2d.setFont(tmpFont);
         g2d.setColor(tmpColor);
     }
+    public void muteAudio (boolean mute){
+        this.mute = mute;
+        if(mute){
+            wall.setMute(true);
+            gameAudio.muteAudio= true;
+            gameOver.muteAudio= true;
+            sfx.muteAudio= true;
+            win.muteAudio= true;
+        }
+        else {
+            wall.setMute(false);
+            gameAudio.muteAudio= false;
+            gameOver.muteAudio= false;
+            sfx.muteAudio= false;
+            win.muteAudio= false;
+        }
+    }
+
+    public boolean getMute (){return mute;}
 
     @Override
     public void keyTyped(KeyEvent keyEvent) {
@@ -416,22 +435,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         }
 
     }
-    public void muteAudio (boolean mute){
-        if(mute){
-            wall.setMute(true);
-            gameAudio.muteAudio= true;
-            gameOver.muteAudio= true;
-            sfx.muteAudio= true;
-            win.muteAudio= true;
-        }
-        else {
-            wall.setMute(false);
-            gameAudio.muteAudio= false;
-            gameOver.muteAudio= false;
-            sfx.muteAudio= false;
-            win.muteAudio= false;
-        }
-    }
+
     @Override
     public void mousePressed(MouseEvent mouseEvent) {
 

@@ -127,6 +127,8 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
         buttonFont = new Font("Monospaced",Font.PLAIN,startButton.height-2);
     }
 
+    public boolean getMute(){return mute;}
+    public void setMute(boolean mute){this.mute=mute;}
 
     public void paint(Graphics g){
         drawMenu((Graphics2D)g);

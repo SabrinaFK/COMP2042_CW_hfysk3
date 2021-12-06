@@ -66,6 +66,7 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         initialize();
         /*to avoid problems with graphics focus controller is added here*/
         this.addWindowFocusListener(this);
+        gameBoard.muteAudio(homeMenu.getMute());
     }
 
     public void disableGameBoard(){
@@ -76,6 +77,8 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         initialize();
         /*to avoid problems with graphics focus controller is added here*/
         this.addWindowFocusListener(this);
+        homeMenu.setMute(gameBoard.getMute());
+
     }
 
     private void autoLocate(){
