@@ -1,4 +1,5 @@
 package test;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -30,9 +31,10 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
     private Rectangle restartButton;
     private Rectangle nextButton;
 
-
     //Save Score? Screen Text
-    private String MESSAGE;
+    private String MESSAGE1;
+    private String MESSAGE2;
+    private String MESSAGE3;
 
     //Save Score? Button Text
     private static final String YES_TEXT = "Yes";
@@ -54,14 +56,21 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
     private Font titleFont;
     private Font playerScoreFont;
     private Font playerScoreTextFont;
-    private Font messageFont;
+    private Font messageFont1;
+    private Font messageFont2;
     private Font buttonFont;
 
     private GameFrame owner;
 
     private int strLen=0;
+    private int score;
+    private String name;
+
+    private int[] leaderBoardScore;
+    private String[] leaderBoardName;
 
     private boolean showSaveScoreScreen;
+    private boolean newHighScore;
 
     //Mouse hover indicator
     private boolean restartHover;
@@ -96,14 +105,14 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
         buttonFont = new Font("Monospaced",Font.PLAIN, restartButton.height-2);
         playerScoreFont = new Font("Noto Mono",Font.BOLD,60);
         playerScoreTextFont = new Font("Noto Mono",Font.PLAIN,30);
-        messageFont = new Font("Monospaced",Font.PLAIN, 30);
+        messageFont1 = new Font("Monospaced",Font.PLAIN, 30);
+        messageFont2 = new Font("Monospaced",Font.PLAIN, 20);
     }
-
     public void paint(Graphics g){drawMenu((Graphics2D)g);}
 
     public void drawMenu(Graphics2D g2d)
     {
-        PLAYER_SCORE = String.format("%d", owner.getScore());
+        PLAYER_SCORE = String.format("%d", score=owner.getScore());
         drawContainer(g2d);
         Font tmpFont = g2d.getFont();
         Color tmpColor = g2d.getColor();
@@ -125,6 +134,7 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
 
         g2d.setFont(tmpFont);
         g2d.setColor(tmpColor);
+        strLen = 0;
     }
 
     private void drawContainer(Graphics2D g2d){
@@ -172,15 +182,30 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
         }
         else
         {
-            Rectangle2D messageRect = messageFont.getStringBounds(MESSAGE, frc);
+
+            Rectangle2D messageRect1 = messageFont2.getStringBounds(MESSAGE1, frc);
+            Rectangle2D messageRect2 = messageFont1.getStringBounds(MESSAGE2, frc);
+            Rectangle2D messageRect3 = messageFont1.getStringBounds(MESSAGE3, frc);
 
             int sX, sY;
 
-            sX = (int) (menuFace.getWidth() - messageRect.getWidth()) / 2;
+            sX = (int) (menuFace.getWidth() - messageRect1.getWidth()) / 2;
             sY = (int) (menuFace.getHeight() / 3);
 
-            g2d.setFont(messageFont);
-            g2d.drawString(MESSAGE, sX, sY);
+            g2d.setFont(messageFont2);
+            g2d.drawString(MESSAGE1, sX, sY);
+
+            sX = (int) (menuFace.getWidth() - messageRect2.getWidth()) / 2;
+            sY += 40;
+
+            g2d.setFont(messageFont1);
+            g2d.drawString(MESSAGE2, sX, sY);
+
+            sX = (int) (menuFace.getWidth() - messageRect3.getWidth()) / 2;
+            sY += 40;
+
+            g2d.setFont(messageFont1);
+            g2d.drawString(MESSAGE3, sX, sY);
         }
 
     }
@@ -244,13 +269,36 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
         }
         else
         {
-            int x = (menuFace.width - yesButton.width)/4;
-            int y = (menuFace.height - yesButton.height)/2;
+            int x = (menuFace.width - noButton.width)/4;
+            int y = (menuFace.height - noButton.height)*3/4 +10;
+
+            noButton.setLocation(x, y);
+
+            x = (int) (noButton.width - yTxtRect.getWidth()) / 2;
+            y = (int) (noButton.height - yTxtRect.getHeight()) / 2;
+
+            x += noButton.x + 2;
+            y += noButton.y + (restartButton.height * 0.9);
+
+            if (noHover) {
+                Color tmp = g2d.getColor();
+                g2d.setColor(CLICKED_BUTTON_COLOR);
+                g2d.draw(noButton);
+                g2d.setColor(CLICKED_TEXT);
+                g2d.drawString(NO_TEXT, x, y);
+                g2d.setColor(tmp);
+            } else {
+                g2d.draw(noButton);
+                g2d.drawString(NO_TEXT, x, y);
+            }
+
+            x = (menuFace.width - yesButton.width)*3/4;
+            y = (menuFace.height - yesButton.height)*3/4 + 10;
 
             yesButton.setLocation(x, y);
 
-            x = (int) (yesButton.width - yTxtRect.getWidth()) / 2;
-            y = (int) (yesButton.height - yTxtRect.getHeight()) / 2;
+            x = (int) (yesButton.width - noTxtRect.getWidth()) / 2;
+            y = (int) (yesButton.height - noTxtRect.getHeight()) / 2;
 
             x += yesButton.x + 2;
             y += yesButton.y + (restartButton.height * 0.9);
@@ -266,26 +314,78 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
                 g2d.draw(yesButton);
                 g2d.drawString(YES_TEXT, x, y);
             }
+
+            x = (menuFace.width - nextButton.width) /2;
+            y = menuFace.height*3/4 + yesButton.height;
+
+            nextButton.setLocation(x, y);
+
+            x = (int) (nextButton.getWidth() - nTxtRect.getWidth()) / 2;
+            y = (int) (nextButton.getHeight() - nTxtRect.getHeight()) / 2;
+
+            x += nextButton.x + 5;
+            y += nextButton.y + (nextButton.height * 0.9);
+
+            if (nextHover) {
+                Color tmp = g2d.getColor();
+                g2d.setColor(CLICKED_BUTTON_COLOR);
+                g2d.draw(nextButton);
+                g2d.setColor(CLICKED_TEXT);
+                g2d.drawString(NEXT_TEXT, x, y);
+                g2d.setColor(tmp);
+            } else {
+                g2d.draw(nextButton);
+                g2d.drawString(NEXT_TEXT, x, y);
+            }
         }
     }
+
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
         Point p = mouseEvent.getPoint();
 
         if (nextButton.contains(p)) {
+            owner.ReadFile();
+            leaderBoardScore=owner.getLeaderBoardScore();
+            leaderBoardName=owner.getLeaderBoardName();
+            for(int x=0; x<5; x++){
+                if(score> leaderBoardScore[x])
+                    showSaveScoreScreen=true;
+            }
             if(showSaveScoreScreen) {
-                owner.enableLeaderboard(false);
+                TITLE =  "Congratulations";
+                MESSAGE1 =  "You Made it Into the Leaderboad!";
+                MESSAGE2 =  "Would You Like to";
+                MESSAGE3 =  "Save Your Score?";
+                owner.WriteFile(leaderBoardScore, leaderBoardName);
             }
-            else {
-                MESSAGE = "Would You Like to Save Your Score?";
-                showSaveScoreScreen = true;
-            }
+            else {owner.enableLeaderboard(false);}
             repaint();
         }
         else if(restartButton.contains(p)){
             owner.disableGameOver();
             owner.enableGameBoard();
         }
+        else if (yesButton.contains(p)){
+            for (int x=0; x<5; x++){
+                int temp1;
+                String temp2;
+                if (score > leaderBoardScore[x]) {
+                    temp1 = leaderBoardScore[x];
+                    temp2 = leaderBoardName[x];
+                    leaderBoardScore[x]=score;
+                    leaderBoardName[x]=name;
+
+                    for(int y=x; y<5; y++) {
+                        leaderBoardScore[y] = temp1;
+                        leaderBoardName[y] = temp2;
+                        temp1 = leaderBoardScore[y+1];
+                        temp2 = leaderBoardName[y+1];
+                    }
+                }
+            }
+        }
+        else if (noButton.contains(p)){owner.enableHomeMenu();}
     }
 
     @Override
@@ -339,6 +439,8 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
             this.setCursor(Cursor.getDefaultCursor());
             restartHover = false;
             nextHover = false;
+            yesHover = false;
+            noHover = false;
             repaint();
         }
     }

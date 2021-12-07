@@ -16,7 +16,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package test;
-
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.channels.ScatteringByteChannel;
+import java.util.Scanner;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
@@ -39,6 +44,8 @@ public class GameFrame extends JFrame implements WindowFocusListener {
     private boolean gaming;
 
     private int score;
+    private int[] leaderBoardScore;
+    private String[] leaderBoardName;
 
     public GameFrame(){
         super();
@@ -68,6 +75,56 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         this.pack();
         this.autoLocate();
         this.setVisible(true);
+    }
+
+    public void ReadFile(){
+        try{
+            File leaderboardScore = new File("src/test/leaderboardscore.txt");
+            File leaderboardName = new File("src/test/leaderboardname.txt");
+            Scanner scanner1 = new Scanner(leaderboardScore);
+            Scanner scanner2 = new Scanner(leaderboardName);
+            int x =0;
+            while (scanner1.hasNextLine()) {
+                leaderBoardScore[x]= scanner1.nextInt();
+                leaderBoardName[x++]= scanner2.nextLine();
+            }
+        }
+        catch(FileNotFoundException e)
+        {
+            System.out.println("txt files failed to open");
+            e.printStackTrace();
+        }
+    }
+
+    public String[] getLeaderBoardName() {return leaderBoardName;}
+    public int[] getLeaderBoardScore() {return leaderBoardScore;}
+
+    public void WriteFile(int[] score, String[] name){
+        try {
+            FileWriter leaderboardScore = new FileWriter("leaderboardscore.txt");
+            FileWriter leaderboardName = new FileWriter("leaderboardname.txt");
+            int x=0;
+            while (x<5) {
+                leaderboardScore.write(String.format("%d\n", score[x]));
+                leaderboardName.write(name[x++]);
+            }
+        }
+        catch (IOException e)
+        {
+            System.out.println("An error occured");
+            e.printStackTrace();
+        }
+    }
+    public void enableHomeMenu(){
+        gameOverAudio.stop();
+        this.dispose();
+        this.remove(gameOver);
+        this.add(homeMenu,BorderLayout.CENTER);
+        this.setUndecorated(true);
+        initialize();
+        /*to avoid problems with graphics focus controller is added here*/
+        this.addWindowFocusListener(this);
+        gameBoard.muteAudio(homeMenu.getMute());
     }
 
     public void enableGameBoard(){
@@ -133,6 +190,9 @@ public class GameFrame extends JFrame implements WindowFocusListener {
     public void enableLeaderboard(boolean fromTutorial){
         if (!fromTutorial)
         {
+            ReadFile();
+            leaderboard.setSCORE(leaderBoardScore);
+            leaderboard.setNAME(leaderBoardName);
             this.dispose();
             this.remove(gameOver);
             this.add(leaderboard,BorderLayout.CENTER);

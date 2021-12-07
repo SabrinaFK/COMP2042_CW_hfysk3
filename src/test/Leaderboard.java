@@ -12,6 +12,10 @@ public class Leaderboard extends JComponent implements MouseListener, MouseMotio
     private static final String TITLE = "Leaderboard";
     private static final String BACK_TEXT = "Back";
 
+    //ScoreBoard Menu Text
+    private int[] SCORE;
+    private String[] NAME;
+
     //ScoreBoard Menu Colors
     private static final Color BG_COLOR = new Color(181, 229, 255);
     private static final Color BORDER_COLOR = new Color(23, 66, 131);
@@ -36,6 +40,7 @@ public class Leaderboard extends JComponent implements MouseListener, MouseMotio
     //Fonts
     private Font TitleFont;
     private Font buttonFont;
+    private Font leaderboardFont;
 
     private GameFrame owner;
 
@@ -69,8 +74,15 @@ public class Leaderboard extends JComponent implements MouseListener, MouseMotio
         //Setting fonts
         TitleFont = new Font("Noto Mono",Font.BOLD,40);
         buttonFont = new Font("Monospaced",Font.PLAIN,backButton.height-2);
+        leaderboardFont = new Font("Monospaced",Font.PLAIN,20);
     }
-    public void paint(Graphics g){drawMenu((Graphics2D)g);}
+
+    public void setSCORE(int[] SCORE) {this.SCORE = SCORE;}
+    public void setNAME(String[] NAME) {this.NAME = NAME;}
+
+    public void paint(Graphics g){
+        drawMenu((Graphics2D)g);
+    }
 
     public void drawMenu(Graphics2D g2d)
     {
@@ -91,11 +103,37 @@ public class Leaderboard extends JComponent implements MouseListener, MouseMotio
 
         g2d.drawString(TITLE, x, y);
         drawButton(g2d);
+        drawText(g2d);
 
         g2d.setFont(tmpFont);
         g2d.setColor(tmpColor);
     }
+    private void drawText(Graphics2D g2d){
+        g2d.setColor(TEXT_COLOR);
 
+        FontRenderContext frc = g2d.getFontRenderContext();
+
+        int sX, sY;
+        sY = (int) (menuFace.getHeight() / 3);
+
+        for (int x=0; x<5; x++) {
+            sX = 80;
+            sY += 20;
+
+            g2d.setFont(leaderboardFont);
+            g2d.drawString(String.format("%d",x+1), sX, sY);
+
+            sX += 30;
+
+            g2d.setFont(leaderboardFont);
+            g2d.drawString("| "+NAME[x], sX, sY);
+
+            sX += 200;
+
+            g2d.setFont(leaderboardFont);
+            g2d.drawString(String.format("| %d",SCORE[x]), sX, sY);
+        }
+    }
     private void drawContainer(Graphics2D g2d){
         //adding background image
         g2d.fill(menuFace);
