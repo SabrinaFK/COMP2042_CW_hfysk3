@@ -11,7 +11,7 @@ import java.awt.geom.Rectangle2D;
 public class GameOver extends JComponent implements MouseListener, MouseMotionListener {
     //GameOver Screen Text
     private String TITLE = "GameOver";
-    private static final String PLAYER_SCORE_TEXT = "Player Score";
+    private String PLAYER_SCORE_TEXT = "Player Score";
     private String PLAYER_SCORE;
 
     //GameOver Button Text
@@ -64,13 +64,14 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
 
     private int strLen=0;
     private int score;
-    private String name;
+    private String name="ann";
 
-    private int[] leaderBoardScore;
-    private String[] leaderBoardName;
+    private int[] leaderBoardScore={0,0,0,0,0};
+    private String[] leaderBoardName={"a","a","a","a","a"};
 
     private boolean showSaveScoreScreen;
-    private boolean newHighScore;
+    private boolean showGoToLeaderboard;
+    private boolean goToLeaderboard;
 
     //Mouse hover indicator
     private boolean restartHover;
@@ -161,26 +162,7 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
 
         FontRenderContext frc = g2d.getFontRenderContext();
 
-        if (!showSaveScoreScreen)
-        {
-            Rectangle2D playerScoreTextRect = playerScoreTextFont.getStringBounds(PLAYER_SCORE_TEXT, frc);
-            Rectangle2D playerScoreRect = playerScoreFont.getStringBounds(PLAYER_SCORE, frc);
-
-            int sX, sY;
-
-            sX = (int) (menuFace.getWidth() - playerScoreTextRect.getWidth()) / 2;
-            sY = (int) (menuFace.getHeight() / 3);
-
-            g2d.setFont(playerScoreTextFont);
-            g2d.drawString(PLAYER_SCORE_TEXT, sX, sY);
-
-            sX = (int) (menuFace.getWidth() - playerScoreRect.getWidth()) / 2;
-            sY += (int) playerScoreRect.getHeight() + 20;
-
-            g2d.setFont(playerScoreFont);
-            g2d.drawString(PLAYER_SCORE, sX, sY);
-        }
-        else
+        if (showSaveScoreScreen)
         {
 
             Rectangle2D messageRect1 = messageFont2.getStringBounds(MESSAGE1, frc);
@@ -207,7 +189,43 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
             g2d.setFont(messageFont1);
             g2d.drawString(MESSAGE3, sX, sY);
         }
+        if (showGoToLeaderboard)
+        {
+            Rectangle2D messageRect1 = messageFont2.getStringBounds(MESSAGE1, frc);
+            Rectangle2D messageRect2 = messageFont1.getStringBounds(MESSAGE2, frc);
 
+            int sX, sY;
+
+            sX = (int) (menuFace.getWidth() - messageRect1.getWidth()) / 2;
+            sY = (int) (menuFace.getHeight() / 3);
+
+            g2d.setFont(messageFont2);
+            g2d.drawString(MESSAGE1, sX, sY);
+
+            sX = (int) (menuFace.getWidth() - messageRect2.getWidth()) / 2;
+            sY += 40;
+
+            g2d.setFont(messageFont1);
+            g2d.drawString(MESSAGE2, sX, sY);
+        }
+        else {
+            Rectangle2D playerScoreTextRect = playerScoreTextFont.getStringBounds(PLAYER_SCORE_TEXT, frc);
+            Rectangle2D playerScoreRect = playerScoreFont.getStringBounds(PLAYER_SCORE, frc);
+
+            int sX, sY;
+
+            sX = (int) (menuFace.getWidth() - playerScoreTextRect.getWidth()) / 2;
+            sY = (int) (menuFace.getHeight() / 3);
+
+            g2d.setFont(playerScoreTextFont);
+            g2d.drawString(PLAYER_SCORE_TEXT, sX, sY);
+
+            sX = (int) (menuFace.getWidth() - playerScoreRect.getWidth()) / 2;
+            sY += (int) playerScoreRect.getHeight() + 20;
+
+            g2d.setFont(playerScoreFont);
+            g2d.drawString(PLAYER_SCORE, sX, sY);
+        }
     }
 
     private void drawButton(Graphics2D g2d){
@@ -219,55 +237,7 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
 
         g2d.setFont(buttonFont);
 
-        if (!showSaveScoreScreen)
-        {
-            int x = 10;
-            int y = (menuFace.height - restartButton.height) - 10;
-
-            restartButton.setLocation(x, y);
-
-            x = (int) (restartButton.getWidth() - bTxtRect.getWidth()) / 2;
-            y = (int) (restartButton.getHeight() - bTxtRect.getHeight()) / 2;
-
-            x += restartButton.x + 2;
-            y += restartButton.y + (restartButton.height * 0.9);
-
-            if (restartHover) {
-                Color tmp = g2d.getColor();
-                g2d.setColor(CLICKED_BUTTON_COLOR);
-                g2d.draw(restartButton);
-                g2d.setColor(CLICKED_TEXT);
-                g2d.drawString(RESTART_TEXT, x, y);
-                g2d.setColor(tmp);
-            } else {
-                g2d.draw(restartButton);
-                g2d.drawString(RESTART_TEXT, x, y);
-            }
-
-            x = (menuFace.width - nextButton.width) - 10;
-            y = (menuFace.height - nextButton.height) - 10;
-
-            nextButton.setLocation(x, y);
-
-            x = (int) (nextButton.getWidth() - nTxtRect.getWidth()) / 2;
-            y = (int) (nextButton.getHeight() - nTxtRect.getHeight()) / 2;
-
-            x += nextButton.x + 5;
-            y += nextButton.y + (nextButton.height * 0.9);
-
-            if (nextHover) {
-                Color tmp = g2d.getColor();
-                g2d.setColor(CLICKED_BUTTON_COLOR);
-                g2d.draw(nextButton);
-                g2d.setColor(CLICKED_TEXT);
-                g2d.drawString(NEXT_TEXT, x, y);
-                g2d.setColor(tmp);
-            } else {
-                g2d.draw(nextButton);
-                g2d.drawString(NEXT_TEXT, x, y);
-            }
-        }
-        else
+        if (showSaveScoreScreen)
         {
             int x = (menuFace.width - noButton.width)/4;
             int y = (menuFace.height - noButton.height)*3/4 +10;
@@ -338,6 +308,102 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
                 g2d.drawString(NEXT_TEXT, x, y);
             }
         }
+        else if (showGoToLeaderboard)
+        {
+            int x = (menuFace.width - noButton.width)/4;
+            int y = (menuFace.height - noButton.height)*3/4 +10;
+
+            noButton.setLocation(x, y);
+
+            x = (int) (noButton.width - yTxtRect.getWidth()) / 2;
+            y = (int) (noButton.height - yTxtRect.getHeight()) / 2;
+
+            x += noButton.x + 2;
+            y += noButton.y + (restartButton.height * 0.9);
+
+            if (noHover) {
+                Color tmp = g2d.getColor();
+                g2d.setColor(CLICKED_BUTTON_COLOR);
+                g2d.draw(noButton);
+                g2d.setColor(CLICKED_TEXT);
+                g2d.drawString(NO_TEXT, x, y);
+                g2d.setColor(tmp);
+            } else {
+                g2d.draw(noButton);
+                g2d.drawString(NO_TEXT, x, y);
+            }
+
+            x = (menuFace.width - yesButton.width)*3/4;
+            y = (menuFace.height - yesButton.height)*3/4 + 10;
+
+            yesButton.setLocation(x, y);
+
+            x = (int) (yesButton.width - noTxtRect.getWidth()) / 2;
+            y = (int) (yesButton.height - noTxtRect.getHeight()) / 2;
+
+            x += yesButton.x + 2;
+            y += yesButton.y + (restartButton.height * 0.9);
+
+            if (yesHover) {
+                Color tmp = g2d.getColor();
+                g2d.setColor(CLICKED_BUTTON_COLOR);
+                g2d.draw(yesButton);
+                g2d.setColor(CLICKED_TEXT);
+                g2d.drawString(YES_TEXT, x, y);
+                g2d.setColor(tmp);
+            } else {
+                g2d.draw(yesButton);
+                g2d.drawString(YES_TEXT, x, y);
+            }
+        }
+        else
+        {
+            int x = 10;
+            int y = (menuFace.height - restartButton.height) - 10;
+
+            restartButton.setLocation(x, y);
+
+            x = (int) (restartButton.getWidth() - bTxtRect.getWidth()) / 2;
+            y = (int) (restartButton.getHeight() - bTxtRect.getHeight()) / 2;
+
+            x += restartButton.x + 2;
+            y += restartButton.y + (restartButton.height * 0.9);
+
+            if (restartHover) {
+                Color tmp = g2d.getColor();
+                g2d.setColor(CLICKED_BUTTON_COLOR);
+                g2d.draw(restartButton);
+                g2d.setColor(CLICKED_TEXT);
+                g2d.drawString(RESTART_TEXT, x, y);
+                g2d.setColor(tmp);
+            } else {
+                g2d.draw(restartButton);
+                g2d.drawString(RESTART_TEXT, x, y);
+            }
+
+            x = (menuFace.width - nextButton.width) - 10;
+            y = (menuFace.height - nextButton.height) - 10;
+
+            nextButton.setLocation(x, y);
+
+            x = (int) (nextButton.getWidth() - nTxtRect.getWidth()) / 2;
+            y = (int) (nextButton.getHeight() - nTxtRect.getHeight()) / 2;
+
+            x += nextButton.x + 5;
+            y += nextButton.y + (nextButton.height * 0.9);
+
+            if (nextHover) {
+                Color tmp = g2d.getColor();
+                g2d.setColor(CLICKED_BUTTON_COLOR);
+                g2d.draw(nextButton);
+                g2d.setColor(CLICKED_TEXT);
+                g2d.drawString(NEXT_TEXT, x, y);
+                g2d.setColor(tmp);
+            } else {
+                g2d.draw(nextButton);
+                g2d.drawString(NEXT_TEXT, x, y);
+            }
+        }
     }
 
     @Override
@@ -345,47 +411,73 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
         Point p = mouseEvent.getPoint();
 
         if (nextButton.contains(p)) {
-            owner.ReadFile();
             leaderBoardScore=owner.getLeaderBoardScore();
             leaderBoardName=owner.getLeaderBoardName();
             for(int x=0; x<5; x++){
-                if(score> leaderBoardScore[x])
-                    showSaveScoreScreen=true;
+                if(score> leaderBoardScore[x]) {
+                    showSaveScoreScreen = true;
+                    break;
+                }
             }
-            if(showSaveScoreScreen) {
+
+            if(goToLeaderboard) {
+                owner.enableLeaderboard(false);
+                goToLeaderboard=false;
+                showSaveScoreScreen=false;
+            }
+            else if(showSaveScoreScreen) {
                 TITLE =  "Congratulations";
                 MESSAGE1 =  "You Made it Into the Leaderboad!";
                 MESSAGE2 =  "Would You Like to";
                 MESSAGE3 =  "Save Your Score?";
-                owner.WriteFile(leaderBoardScore, leaderBoardName);
+                PLAYER_SCORE_TEXT ="";
+                PLAYER_SCORE="";
+                goToLeaderboard=true;
             }
-            else {owner.enableLeaderboard(false);}
+            else {
+                owner.enableLeaderboard(false);
+                goToLeaderboard=false;
+                showSaveScoreScreen=false;
+            }
             repaint();
         }
         else if(restartButton.contains(p)){
             owner.disableGameOver();
             owner.enableGameBoard();
+            goToLeaderboard=false;
+            showGoToLeaderboard=false;
+            showSaveScoreScreen=false;
         }
         else if (yesButton.contains(p)){
-            for (int x=0; x<5; x++){
-                int temp1;
-                String temp2;
-                if (score > leaderBoardScore[x]) {
-                    temp1 = leaderBoardScore[x];
-                    temp2 = leaderBoardName[x];
-                    leaderBoardScore[x]=score;
-                    leaderBoardName[x]=name;
-
-                    for(int y=x; y<5; y++) {
-                        leaderBoardScore[y] = temp1;
-                        leaderBoardName[y] = temp2;
-                        temp1 = leaderBoardScore[y+1];
-                        temp2 = leaderBoardName[y+1];
-                    }
+            if (showSaveScoreScreen){
+                int x;
+                for (x = 0; x < 5; x++) {
+                    if (score > leaderBoardScore[x])
+                        break;
                 }
+
+                for (int y = 3; y >= x; y--) {
+                    leaderBoardScore[y + 1] = leaderBoardScore[y];
+                    leaderBoardName[y + 1] = leaderBoardName[y];
+                }
+                leaderBoardName[x] = name;
+                leaderBoardScore[x] = score;
+
+                owner.WriteFile(leaderBoardScore, leaderBoardName);
+            }
+            else if (showGoToLeaderboard){
+                owner.enableLeaderboard(false);
+                goToLeaderboard=false;
+                showGoToLeaderboard=false;
+                showSaveScoreScreen=false;
             }
         }
-        else if (noButton.contains(p)){owner.enableHomeMenu();}
+        else if (noButton.contains(p)){
+            owner.enableHomeMenu();
+            goToLeaderboard=false;
+            showGoToLeaderboard=false;
+            showSaveScoreScreen=false;
+        }
     }
 
     @Override

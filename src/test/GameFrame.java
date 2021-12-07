@@ -44,8 +44,8 @@ public class GameFrame extends JFrame implements WindowFocusListener {
     private boolean gaming;
 
     private int score;
-    private int[] leaderBoardScore;
-    private String[] leaderBoardName;
+    private int[] leaderBoardScore={1,2,3,4,5};
+    private String[] leaderBoardName={"a","a","a","a","a"};
 
     public GameFrame(){
         super();
@@ -88,6 +88,8 @@ public class GameFrame extends JFrame implements WindowFocusListener {
                 leaderBoardScore[x]= scanner1.nextInt();
                 leaderBoardName[x++]= scanner2.nextLine();
             }
+            scanner1.close();
+            scanner2.close();
         }
         catch(FileNotFoundException e)
         {
@@ -101,13 +103,18 @@ public class GameFrame extends JFrame implements WindowFocusListener {
 
     public void WriteFile(int[] score, String[] name){
         try {
-            FileWriter leaderboardScore = new FileWriter("leaderboardscore.txt");
-            FileWriter leaderboardName = new FileWriter("leaderboardname.txt");
+            System.out.println("Save Succeded");
+            FileWriter leaderboardScore = new FileWriter("src/test/leaderboardscore.txt",false);
+            FileWriter leaderboardName = new FileWriter("src/test/leaderboardname.txt",false);
             int x=0;
-            while (x<5) {
+            while (x<4) {
                 leaderboardScore.write(String.format("%d\n", score[x]));
-                leaderboardName.write(name[x++]);
+                leaderboardName.write(String.format("%s\n", name[x++]));
             }
+            leaderboardScore.write(String.format("%d", score[4]));
+            leaderboardName.write(String.format("%s", name[4]));
+            leaderboardScore.close();
+            leaderboardName.close();
         }
         catch (IOException e)
         {
@@ -170,6 +177,7 @@ public class GameFrame extends JFrame implements WindowFocusListener {
     }
 
     public void enableGameOver(){
+        ReadFile();
         if (!gameBoard.getMute()){
             gameOverAudio.play();
             gameOverAudio.loop();
