@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.channels.ScatteringByteChannel;
 import java.util.Scanner;
 import javax.swing.*;
 import java.awt.*;
@@ -77,6 +76,9 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         this.setVisible(true);
     }
 
+    public String[] getLeaderBoardName() {return leaderBoardName;}
+    public int[] getLeaderBoardScore() {return leaderBoardScore;}
+
     public void ReadFile(){
         try{
             File leaderboardScore = new File("src/test/leaderboardscore.txt");
@@ -97,9 +99,6 @@ public class GameFrame extends JFrame implements WindowFocusListener {
             e.printStackTrace();
         }
     }
-
-    public String[] getLeaderBoardName() {return leaderBoardName;}
-    public int[] getLeaderBoardScore() {return leaderBoardScore;}
 
     public void WriteFile(int[] score, String[] name){
         try {
@@ -122,6 +121,8 @@ public class GameFrame extends JFrame implements WindowFocusListener {
             e.printStackTrace();
         }
     }
+
+
     public void enableHomeMenu(){
         gameOverAudio.stop();
         this.dispose();

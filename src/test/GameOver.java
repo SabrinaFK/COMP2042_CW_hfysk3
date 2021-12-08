@@ -64,7 +64,7 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
 
     private int strLen=0;
     private int score;
-    private String name="ann";
+    private String name;
 
     private int[] leaderBoardScore={0,0,0,0,0};
     private String[] leaderBoardName={"a","a","a","a","a"};
@@ -109,11 +109,17 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
         messageFont1 = new Font("Monospaced",Font.PLAIN, 30);
         messageFont2 = new Font("Monospaced",Font.PLAIN, 20);
     }
-    public void paint(Graphics g){drawMenu((Graphics2D)g);}
+    public void paint(Graphics g){
+        if (!showSaveScoreScreen && !showGoToLeaderboard) {
+            String TITLE = "GameOver";
+            String PLAYER_SCORE_TEXT = "Player Score";
+            PLAYER_SCORE = String.format("%d", score = owner.getScore());
+        }
+        drawMenu((Graphics2D)g);
+    }
 
     public void drawMenu(Graphics2D g2d)
     {
-        PLAYER_SCORE = String.format("%d", score=owner.getScore());
         drawContainer(g2d);
         Font tmpFont = g2d.getFont();
         Color tmpColor = g2d.getColor();
@@ -189,7 +195,7 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
             g2d.setFont(messageFont1);
             g2d.drawString(MESSAGE3, sX, sY);
         }
-        if (showGoToLeaderboard)
+        else if (showGoToLeaderboard)
         {
             Rectangle2D messageRect1 = messageFont2.getStringBounds(MESSAGE1, frc);
             Rectangle2D messageRect2 = messageFont1.getStringBounds(MESSAGE2, frc);
@@ -418,25 +424,32 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
                     showSaveScoreScreen = true;
                     break;
                 }
+                else
+                    showGoToLeaderboard=true;
             }
 
             if(goToLeaderboard) {
-                owner.enableLeaderboard(false);
                 goToLeaderboard=false;
                 showSaveScoreScreen=false;
+                showGoToLeaderboard=false;
+                owner.enableLeaderboard(false);
             }
             else if(showSaveScoreScreen) {
-                TITLE =  "Congratulations";
                 MESSAGE1 =  "You Made it Into the Leaderboad!";
                 MESSAGE2 =  "Would You Like to";
                 MESSAGE3 =  "Save Your Score?";
-                PLAYER_SCORE_TEXT ="";
-                PLAYER_SCORE="";
+                goToLeaderboard=true;
+            }
+            else if(showGoToLeaderboard){
+                MESSAGE1 =  "Would You Like to";
+                MESSAGE2 =  "See the Leaderboard?";
+                MESSAGE3 =  "";
                 goToLeaderboard=true;
             }
             else {
                 owner.enableLeaderboard(false);
                 goToLeaderboard=false;
+                showGoToLeaderboard=false;
                 showSaveScoreScreen=false;
             }
             repaint();
@@ -450,20 +463,25 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
         }
         else if (yesButton.contains(p)){
             if (showSaveScoreScreen){
-                int x;
-                for (x = 0; x < 5; x++) {
-                    if (score > leaderBoardScore[x])
-                        break;
-                }
+                name = JOptionPane.showInputDialog("Please Input Name:", "My Name");
+                if (name != null) {
+                    int x;
+                    for (x = 0; x < 5; x++) {
+                        if (score > leaderBoardScore[x])
+                            break;
+                    }
 
-                for (int y = 3; y >= x; y--) {
-                    leaderBoardScore[y + 1] = leaderBoardScore[y];
-                    leaderBoardName[y + 1] = leaderBoardName[y];
-                }
-                leaderBoardName[x] = name;
-                leaderBoardScore[x] = score;
+                    for (int y = 3; y >= x; y--) {
+                        leaderBoardScore[y + 1] = leaderBoardScore[y];
+                        leaderBoardName[y + 1] = leaderBoardName[y];
+                    }
+                    leaderBoardName[x] = name;
+                    leaderBoardScore[x] = score;
 
-                owner.WriteFile(leaderBoardScore, leaderBoardName);
+                    owner.WriteFile(leaderBoardScore, leaderBoardName);
+                    showGoToLeaderboard = true;
+                    repaint();
+                }
             }
             else if (showGoToLeaderboard){
                 owner.enableLeaderboard(false);
@@ -473,10 +491,10 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
             }
         }
         else if (noButton.contains(p)){
-            owner.enableHomeMenu();
             goToLeaderboard=false;
             showGoToLeaderboard=false;
             showSaveScoreScreen=false;
+            owner.enableHomeMenu();
         }
     }
 
