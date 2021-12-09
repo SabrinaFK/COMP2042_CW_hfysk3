@@ -7,13 +7,25 @@ import java.awt.event.MouseMotionListener;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
-public class Tutorial extends JComponent implements MouseListener, MouseMotionListener{
-    //Information Menu Button Text
+/** This class controls the information screen
+ * @author Sabrina Felicia Kusumawati
+ * @version 0.2
+ */
+public class Information extends JComponent implements MouseListener, MouseMotionListener{
+    /**
+     * Tutorial Screen Title Text
+     */
     private static final String TITLE = "Tutorial";
+    /**
+     * Tutorial Screen Back Button text
+     */
     private static final String BACK_TEXT = "Back";
+    /**
+     * Tutorial Screen Next Button text
+     */
     private static final String NEXT_TEXT = "Next";
 
-    //Information Menu Colors
+    //Tutorial Screen Colors
     private static final Color BG_COLOR = new Color(181, 229, 255);
     private static final Color BORDER_COLOR = new Color(23, 66, 131);
     private static final Color DASH_BORDER_COLOR = new  Color(255, 216, 0);
@@ -21,13 +33,19 @@ public class Tutorial extends JComponent implements MouseListener, MouseMotionLi
     private static final Color CLICKED_BUTTON_COLOR = BG_COLOR.brighter();
     private static final Color CLICKED_TEXT = Color.WHITE;
 
-    //Information Menu Button Rectangles
+    //Tutorial Screen Button Rectangles
     private Rectangle menuFace;
     private Rectangle backButton;
     private Rectangle nextButton;
 
+    /**
+     * Contains window dimension
+     */
     //Border sizes
     private static final int BORDER_SIZE = 5;
+    /**
+     * Contains window border dash sizes
+     */
     private static final float[] DASHES = {12,6};
 
     //Border Strokes
@@ -40,14 +58,26 @@ public class Tutorial extends JComponent implements MouseListener, MouseMotionLi
 
     private GameFrame owner;
 
+    /**
+     * Contains string length
+     */
     private int strLen=0;
 
-    //Mouse hover indicator
+    /**
+     * Indicates if cursor is hovering over back button or not
+     */
     private boolean backHover;
+    /**
+     * Indicates if cursor is hovering over next button or not
+     */
     private boolean nextHover;
 
 
-    public Tutorial (GameFrame owner, Dimension area)
+    /** Generates information Screen
+     * @param owner
+     * @param area contains window dimensions
+     */
+    public Information(GameFrame owner, Dimension area)
     {
         this.setFocusable(true);
         this.requestFocusInWindow();
@@ -71,8 +101,15 @@ public class Tutorial extends JComponent implements MouseListener, MouseMotionLi
         TitleFont = new Font("Noto Mono",Font.BOLD,40);
         buttonFont = new Font("Monospaced",Font.PLAIN,backButton.height-2);
     }
+
+    /** Draws information menu
+     * @param g Contains graphics controller
+     */
     public void paint(Graphics g){drawMenu((Graphics2D)g);}
 
+    /** Draws information menu
+     * @param g2d Contains geometry controller
+     */
     public void drawMenu(Graphics2D g2d)
     {
         drawContainer(g2d);
@@ -97,6 +134,9 @@ public class Tutorial extends JComponent implements MouseListener, MouseMotionLi
         g2d.setColor(tmpColor);
     }
 
+    /** draws background image and window border
+     * @param g2d Contains geometry controller
+     */
     private void drawContainer(Graphics2D g2d){
         //adding background image
         g2d.fill(menuFace);
@@ -116,6 +156,9 @@ public class Tutorial extends JComponent implements MouseListener, MouseMotionLi
         g2d.setStroke(tmp);
     }
 
+    /** draws information screen buttons
+     * @param g2d Contains geometry controller
+     */
     private void drawButton(Graphics2D g2d){
         FontRenderContext frc = g2d.getFontRenderContext();
         Rectangle2D bTxtRect = buttonFont.getStringBounds(BACK_TEXT,frc);
@@ -175,7 +218,7 @@ public class Tutorial extends JComponent implements MouseListener, MouseMotionLi
         Point p = mouseEvent.getPoint();
 
         if (nextButton.contains(p)) {owner.enableLeaderboard(true);}
-        else if(backButton.contains(p)){owner.disableTutorial();}
+        else if(backButton.contains(p)){owner.disableInformation();}
     }
 
     @Override

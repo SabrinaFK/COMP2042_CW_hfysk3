@@ -20,6 +20,10 @@ package test;
 import java.awt.*;
 
 
+/** This class starts the game
+ * @author Sabrina Felicia Kusumawati
+ * @version 0.2
+ */
 public class GraphicsMain {
     public static void main(String[] args){
         EventQueue.invokeLater(() -> new GameFrame().initialize());

@@ -26,14 +26,20 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
-
+/**This class controls the game frame
+ * @author Sabrina Felicia Kusumawati
+ * @version 0.2
+ */
 public class GameFrame extends JFrame implements WindowFocusListener {
 
+    /**
+     * Contains the text for the title on the window
+     */
     private static final String DEF_TITLE = "Brick Destroy";
 
     private GameBoard gameBoard;
     private HomeMenu homeMenu;
-    private Tutorial tutorial;
+    private Information information;
     private Leaderboard leaderboard;
     private GameOver gameOver;
 
@@ -48,6 +54,9 @@ public class GameFrame extends JFrame implements WindowFocusListener {
     private int[] leaderBoardScore={1,2,3,4,5};
     private String[] leaderBoardName={"a","a","a","a","a"};
 
+    /**
+     * Generates game frame
+     */
     public GameFrame(){
         super();
 
@@ -59,7 +68,7 @@ public class GameFrame extends JFrame implements WindowFocusListener {
 
         homeMenu = new HomeMenu(this,new Dimension(450,300));
 
-        tutorial = new Tutorial(this,new Dimension(450,300));
+        information = new Information(this,new Dimension(450,300));
 
         leaderboard = new Leaderboard(this,new Dimension(450,300));
 
@@ -70,6 +79,9 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         this.setUndecorated(true);
     }
 
+    /**
+     * Initializes GameFrame
+     */
     public void initialize(){
         this.setTitle(DEF_TITLE);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -78,9 +90,18 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         this.setVisible(true);
     }
 
+    /** gets Leaderboard name list in string array format
+     * @return returns Leaderboard name list in string array format
+     */
     public String[] getLeaderBoardName() {return leaderBoardName;}
+    /** gets Leaderboard score list in integer array format
+     * @return returns Leaderboard score list in integer array format
+     */
     public int[] getLeaderBoardScore() {return leaderBoardScore;}
 
+    /** Reads leaderboard scores and names from text file
+     * gameframe Leaderboard name and score list in their respective arrays
+     */
     public void ReadFile(){
         try{
             File leaderboardScore = new File("src/test/leaderboardscore.txt");
@@ -102,6 +123,10 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         }
     }
 
+    /** updates leaderboard name and score list txts
+     * @param score contains leaderboard score array
+     * @param name contains leaderboard name array
+     */
     public void WriteFile(int[] score, String[] name){
         try {
             System.out.println("Save Succeded");
@@ -125,6 +150,9 @@ public class GameFrame extends JFrame implements WindowFocusListener {
     }
 
 
+    /**
+     * enables homemenu
+     */
     public void enableHomeMenu(){
         gameOverAudio.stop();
         this.dispose();
@@ -137,6 +165,9 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         gameBoard.muteAudio(homeMenu.getMute());
     }
 
+    /**
+     * enables gameboard
+     */
     public void enableGameBoard(){
         winAudio.stop();
         gameOverAudio.stop();
@@ -150,6 +181,9 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         gameBoard.muteAudio(homeMenu.getMute());
     }
 
+    /**
+     * disables gameboard
+     */
     public void disableGameBoard(){
         this.dispose();
         this.remove(gameBoard);
@@ -161,18 +195,24 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         homeMenu.setMute(gameBoard.getMute());
     }
 
-    public void enableTutorial(){
+    /**
+     *enables information screen
+     */
+    public void enableInformation(){
         this.dispose();
         this.remove(homeMenu);
-        this.add(tutorial,BorderLayout.CENTER);
+        this.add(information,BorderLayout.CENTER);
         this.setUndecorated(true);
         initialize();
         /*to avoid problems with graphics focus controller is added here*/
         this.addWindowFocusListener(this);
     }
-    public void disableTutorial(){
+    /**
+     *disables information screen
+     */
+    public void disableInformation(){
         this.dispose();
-        this.remove(tutorial);
+        this.remove(information);
         this.add(homeMenu,BorderLayout.CENTER);
         this.setUndecorated(true);
         initialize();
@@ -180,6 +220,10 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         this.addWindowFocusListener(this);
     }
 
+    /**
+     *enables gameover screen
+     * @param win if win is true then win audio will be played instead of the gameover audio
+     */
     public void enableGameOver(boolean win){
         ReadFile();
         if (!gameBoard.getMute()){
@@ -201,17 +245,26 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         /*to avoid problems with graphics focus controller is added here*/
         this.addWindowFocusListener(this);
     }
+
+    /**
+     * disables gameover screen
+     */
     public void disableGameOver(){
         this.dispose();
         this.remove(gameOver);
     }
 
+    /**
+     * enables leaderboad screen
+     * @param fromTutorial if fromtutorial is true then gameover will be disabled
+     */
     public void enableLeaderboard(boolean fromTutorial){
+        ReadFile();
+        leaderboard.setSCORE(leaderBoardScore);
+        leaderboard.setNAME(leaderBoardName);
+
         if (!fromTutorial)
         {
-            ReadFile();
-            leaderboard.setSCORE(leaderBoardScore);
-            leaderboard.setNAME(leaderBoardName);
             this.dispose();
             this.remove(gameOver);
             this.add(leaderboard,BorderLayout.CENTER);
@@ -222,9 +275,9 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         }
         else {
             this.dispose();
-            this.remove(tutorial);
+            this.remove(information);
             this.add(leaderboard,BorderLayout.CENTER);
-            leaderboard.setFromTutorial(false);
+            leaderboard.setFromInformationl(false);
             this.setUndecorated(true);
             initialize();
             /*to avoid problems with graphics focus controller is added here*/
@@ -232,12 +285,15 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         }
     }
 
+    /** disables leaderboard screen
+     * @param fromTutorial if fromtutorial is true then information will be disabled
+     */
     public void disableLeaderboard(boolean fromTutorial){
         if (fromTutorial)
         {
             this.dispose();
             this.remove(leaderboard);
-            this.add(tutorial,BorderLayout.CENTER);
+            this.add(information,BorderLayout.CENTER);
             this.setUndecorated(true);
             initialize();
             /*to avoid problems with graphics focus controller is added here*/
@@ -257,9 +313,21 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         }
     }
 
+
+    /** sets score according to parametes
+     * @param score contains score
+     */
     public void setScore(int score) {this.score = score;}
+
+
+    /** gets score
+     * @return returns score
+     */
     public int getScore(){return score;}
 
+    /**
+     * sets position of windows
+     */
     private void autoLocate(){
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
         int x = (size.width - this.getWidth()) / 2;

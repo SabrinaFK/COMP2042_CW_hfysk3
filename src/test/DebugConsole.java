@@ -22,8 +22,15 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+/**This class controls the debug console
+ * @author Sabrina Felicia Kusumawati
+ * @version 0.2
+ */
 public class DebugConsole extends JDialog implements WindowListener{
 
+    /**
+     * Contains the text on the title of the Debug Console
+     */
     private static final String TITLE = "Debug Console";
 
 
@@ -33,6 +40,11 @@ public class DebugConsole extends JDialog implements WindowListener{
     private Wall wall;
 
 
+    /** generates the debug console
+     * @param owner
+     * @param wall
+     * @param gameBoard
+     */
     public DebugConsole(JFrame owner,Wall wall,GameBoard gameBoard){
 
         this.wall = wall;
@@ -47,6 +59,9 @@ public class DebugConsole extends JDialog implements WindowListener{
         this.pack();
     }
 
+    /**
+     * Initializes the debug console
+     */
     private void initialize(){
         this.setModal(true);
         this.setTitle(TITLE);
@@ -57,6 +72,9 @@ public class DebugConsole extends JDialog implements WindowListener{
     }
 
 
+    /**
+     * Sets the location of the Debug console to the center of the gameboard window
+     */
     private void setLocation(){
         int x = ((owner.getWidth() - this.getWidth()) / 2) + owner.getX();
         int y = ((owner.getHeight() - this.getHeight()) / 2) + owner.getY();

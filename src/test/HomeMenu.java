@@ -25,16 +25,42 @@ import java.awt.event.MouseMotionListener;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
+/**This class controls the HomeMenu screen
+ * @author Sabrina Felicia Kusumawati
+ * @version 0.2
+ */
 public class HomeMenu extends JComponent implements MouseListener, MouseMotionListener {
-    //Start Menu Text
+    /**
+     * Contains greeting Text
+     */
     private static final String GREETINGS = "Welcome to:";
+    /**
+     * Contains Game title Text
+     */
     private static final String GAME_TITLE = "Brick Destroy";
+    /**
+     * Contains credits Text
+     */
     private static final String CREDITS = "Version 0.2";
 
-    //Start Menu Button text
+    /**
+     * Contains Start Button text
+     */
     private static final String START_TEXT = "Start";
+
+    /**
+     * Contains Exit Button text
+     */
     private static final String EXIT_TEXT = "Exit";
+
+    /**
+     * Contains Info Button text
+     */
     private static final String INFO_TEXT = "Information";
+
+    /**
+     * Contains Mute / Unmute Button text
+     */
     private String MUTE_TEXT = "Mute";
 
     //Start Menu Colors
@@ -43,7 +69,6 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
     private static final Color DASH_BORDER_COLOR = new  Color(255, 216, 0);
     private static final Color TEXT_COLOR = new Color(130, 157, 255);
     private static final Color BUTTON_COLOR = new Color(23,23,35,255);
-    private static final Color CLICKED_BUTTON_COLOR = BG_COLOR.brighter();
     private static final Color CLICKED_TEXT = Color.WHITE;
 
     //Start Menu Button Rectangles
@@ -53,11 +78,24 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
     private Rectangle muteButton;
     private Rectangle infoButton;
 
+    /**
+     * Indicates if audio is muted or not
+     */
     private boolean mute;
+
+    /**
+     * Indicates if audio is playing is playing or not
+     */
     private boolean audioPlaying;
 
-    //Border sizes
+
+    /**
+     * Contains the window border size
+     */
     private static final int BORDER_SIZE = 5;
+    /**
+     * Contains the window border dash length
+     */
     private static final float[] DASHES = {12,6};
 
     //Border Strokes
@@ -74,16 +112,31 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
     private int strLen=0;
 
-    //Mouse Hover indicator
+    /**
+     * Indicates if cursor is hovering over start button
+     */
     private boolean startHover;
+    /**
+     * Indicates if cursor is hovering over mute / unmute button
+     */
     private boolean muteHover;
-    private boolean tutorialHover;
+    /**
+     * Indicates if cursor is hovering over information button
+     */
+    private boolean informationHover;
+    /**
+     * Indicates if cursor is hovering over exit button
+     */
     private boolean exitHover;
 
     //loading audio
     //Audio taken from https://sourceforge.net/projects/tlk-brickbreaker/files/Brick%20Breaker/MP3%20Files/
     private AudioPlayer audio = new AudioPlayer("audio/bgm-start.wav");
 
+    /** Generates home menu
+     * @param owner
+     * @param area contains the window dimensions for home menu
+     */
     public HomeMenu(GameFrame owner,Dimension area){
         this.setFocusable(true);
         this.requestFocusInWindow();
@@ -114,9 +167,19 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
         buttonFont = new Font("Monospaced",Font.PLAIN,startButton.height-2);
     }
 
+    /** gets mute
+     * @return Returns mute
+     */
     public boolean getMute(){return mute;}
+
+    /** sets mute to parameter
+     * @param mute contains mute boolean
+     */
     public void setMute(boolean mute){this.mute=mute;}
 
+    /** draws home menu
+     * @param g contains the graphics controller
+     */
     public void paint(Graphics g){
         if (!audioPlaying)
         {
@@ -136,6 +199,9 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
     }
 
 
+    /** draws home menu
+     * @param g2d contains the geometry controller
+     */
     public void drawMenu(Graphics2D g2d){
         drawContainer(g2d);
         Color prevColor = g2d.getColor();
@@ -162,6 +228,9 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
 
     }
 
+    /** draws home menu background and window border
+     * @param g2d contains the geometry controller
+     */
     private void drawContainer(Graphics2D g2d){
 
         //adding background image
@@ -182,6 +251,9 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
         g2d.setStroke(tmp);
     }
 
+    /** draws home menu text
+     * @param g2d contains the geometry controller
+     */
     private void drawText(Graphics2D g2d){
         g2d.setColor(TEXT_COLOR);
 
@@ -212,6 +284,9 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
         g2d.drawString(CREDITS,sX,sY);
     }
 
+    /** draws home menu bottons
+     * @param g2d contains the geometry controller
+     */
     private void drawButton(Graphics2D g2d){
 
         FontRenderContext frc = g2d.getFontRenderContext();
@@ -262,7 +337,7 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
         x += infoButton.x;
         y += infoButton.y + (startButton.height * 0.9);
 
-        if(tutorialHover){
+        if(informationHover){
             Color tmp = g2d.getColor();
 
             g2d.setColor(BUTTON_COLOR);
@@ -352,7 +427,7 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
             System.exit(0);
         }
         else if(infoButton.contains(p)){
-            owner.enableTutorial();
+            owner.enableInformation();
             repaint();
         }
         else if(muteButton.contains(p)){
@@ -407,7 +482,7 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
                 repaint();
             }
             else if(infoButton.contains(p)){
-                tutorialHover = true;
+                informationHover = true;
                 repaint();
             }
             else if(muteButton.contains(p)){
@@ -418,7 +493,7 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
         else {
             this.setCursor(Cursor.getDefaultCursor());
             startHover = false;
-            tutorialHover = false;
+            informationHover = false;
             exitHover = false;
             muteHover = false;
             repaint();

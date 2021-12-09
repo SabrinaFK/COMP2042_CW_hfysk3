@@ -8,14 +8,32 @@ import java.awt.event.MouseMotionListener;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
+/** This class controls the game over screen
+ * @author Sabrina Felicia Kusumawati
+ * @version 0.2
+ */
 public class GameOver extends JComponent implements MouseListener, MouseMotionListener {
-    //GameOver Screen Text
+
+    /**
+     * Contains GameOver Screen title Text
+     */
     private String TITLE = "GameOver";
+    /**
+     * Contains GameOver Screen massage saying player score
+     */
     private String PLAYER_SCORE_TEXT = "Player Score";
+    /**
+     * Contains GameOver Screen player score text
+     */
     private String PLAYER_SCORE;
 
-    //GameOver Button Text
+    /**
+     * Contains GameOver Restart Button Text
+     */
     private static final String RESTART_TEXT = "Restart";
+    /**
+     * Contains GameOver Next Button Text
+     */
     private static final String NEXT_TEXT = "Next";
 
     //GameOver Screen  Colors
@@ -31,21 +49,41 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
     private Rectangle restartButton;
     private Rectangle nextButton;
 
+    /**
+     * Contains Save Score? Screen top Text
+     */
     //Save Score? Screen Text
     private String MESSAGE1;
+    /**
+     * Contains Save Score? Screen middle Text
+     */
     private String MESSAGE2;
+    /**
+     * Contains Save Score? Screen bottom Text
+     */
     private String MESSAGE3;
 
-    //Save Score? Button Text
+    /**
+     * Contains Save Score? yes Button Text
+     */
     private static final String YES_TEXT = "Yes";
+    /**
+     * Contains Save Score? no Button Text
+     */
     private static final String NO_TEXT = "No";
 
     //Save Score Button Rectangles
     private Rectangle yesButton;
     private Rectangle noButton;
 
+    /**
+     * Contains Frame border size
+     */
     //Border sizes
     private static final int BORDER_SIZE = 5;
+    /**
+     * Contains frame border dash length
+     */
     private static final float[] DASHES = {12,6};
 
     //Border Strokes
@@ -62,23 +100,63 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
 
     private GameFrame owner;
 
+    /**
+     * contains string length
+     */
     private int strLen=0;
+    /**
+     * contains player score
+     */
     private int score;
+    /**
+     * contains player name
+     */
     private String name;
 
+    /**
+     * contains leaderboard score in int array
+     */
     private int[] leaderBoardScore={0,0,0,0,0};
+    /**
+     * contains leaderboard name in string array
+     */
     private String[] leaderBoardName={"a","a","a","a","a"};
 
+    /**
+     * indicates if save score screen is visible or not
+     */
     private boolean showSaveScoreScreen;
+
+    /**
+     * indicates if Go to leaderboard screen is visible or not
+     */
     private boolean showGoToLeaderboard;
+    /**
+     * indicates if next goes to leaderboard or not
+     */
     private boolean goToLeaderboard;
 
-    //Mouse hover indicator
+    /**
+     * indicates if cursor is hovering over restart button
+     */
     private boolean restartHover;
+    /**
+     * indicates if cursor is hovering over next button
+     */
     private boolean nextHover;
+    /**
+     * indicates if cursor is hovering over yes button
+     */
     private boolean yesHover;
+    /**
+     * indicates if cursor is hovering over no button
+     */
     private boolean noHover;
 
+    /** Generates Gameover screen
+     * @param owner
+     * @param area defines the dimension of the window
+     */
     public GameOver (GameFrame owner, Dimension area)
     {
         this.setFocusable(true);
@@ -109,6 +187,10 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
         messageFont1 = new Font("Monospaced",Font.PLAIN, 30);
         messageFont2 = new Font("Monospaced",Font.PLAIN, 20);
     }
+
+    /** Draws gameover screen
+     * @param g contains the graphics controller
+     */
     public void paint(Graphics g){
         if (!showSaveScoreScreen && !showGoToLeaderboard) {
             String TITLE = "GameOver";
@@ -118,6 +200,10 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
         drawMenu((Graphics2D)g);
     }
 
+
+    /** draws gameover screen menu
+     * @param g2d contains the geometry controller
+     */
     public void drawMenu(Graphics2D g2d)
     {
         drawContainer(g2d);
@@ -144,6 +230,10 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
         strLen = 0;
     }
 
+
+    /** draws gameover menu background and window
+     * @param g2d contains the geometry controller
+     */
     private void drawContainer(Graphics2D g2d){
         //adding background image
         g2d.fill(menuFace);
@@ -163,6 +253,9 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
         g2d.setStroke(tmp);
     }
 
+    /** draws gameover screen text based on boolean indicators
+     * @param g2d contains the geometry controller
+     */
     private void drawText(Graphics2D g2d){
         g2d.setColor(TEXT_COLOR);
 
@@ -234,6 +327,9 @@ public class GameOver extends JComponent implements MouseListener, MouseMotionLi
         }
     }
 
+    /** draws gameover menu buttons based on boolean indicators
+     * @param g2d contains the geometry controller
+     */
     private void drawButton(Graphics2D g2d){
         FontRenderContext frc = g2d.getFontRenderContext();
         Rectangle2D bTxtRect = buttonFont.getStringBounds(RESTART_TEXT,frc);

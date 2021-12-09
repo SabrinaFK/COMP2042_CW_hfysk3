@@ -7,16 +7,30 @@ import java.awt.event.MouseMotionListener;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
+/**This class controls the leaderboard screen
+ * @author Sabrina Felicia Kusumawati
+ * @version 0.2
+ */
 public class Leaderboard extends JComponent implements MouseListener, MouseMotionListener{
-    //ScoreBoard Menu Button Text
+    /**
+     * Contains leaderboard screen title Text
+     */
     private static final String TITLE = "Leaderboard";
+    /**
+     * Contains leaderboard screen back button Text
+     */
     private static final String BACK_TEXT = "Back";
 
-    //ScoreBoard Menu Text
+    /**
+     * Contains leaderboard score integer array
+     */
     private int[] SCORE;
+    /**
+     * Contains leaderboard name string array
+     */
     private String[] NAME;
 
-    //ScoreBoard Menu Colors
+    //Leaderboard Menu Colors
     private static final Color BG_COLOR = new Color(181, 229, 255);
     private static final Color BORDER_COLOR = new Color(23, 66, 131);
     private static final Color DASH_BORDER_COLOR = new  Color(255, 216, 0);
@@ -24,13 +38,18 @@ public class Leaderboard extends JComponent implements MouseListener, MouseMotio
     private static final Color CLICKED_BUTTON_COLOR = BG_COLOR.brighter();
     private static final Color CLICKED_TEXT = Color.WHITE;
 
-    //ScoreBoard Menu Button Rectangles
+    //Leaderboard Menu Button Rectangles
     private Rectangle menuFace;
     private Rectangle backButton;
     private Rectangle nextButton;
 
-    //Border sizes
+    /**
+     * Contains leaderboard screen border dimensions
+     */
     private static final int BORDER_SIZE = 5;
+    /**
+     * Contains leaderboard screen border dash length
+     */
     private static final float[] DASHES = {12,6};
 
     //Border Strokes
@@ -44,13 +63,27 @@ public class Leaderboard extends JComponent implements MouseListener, MouseMotio
 
     private GameFrame owner;
 
+    /**
+     * contains string length
+     */
     private int strLen=0;
 
-    //Mouse hover indicator
+
+    /**
+     * Indicates if cursor is hovering over back button
+     */
     private boolean backHover;
-    private boolean fromTutorial;
+
+    /**
+     * Indicates if leaderboard was opened from information screen or not
+     */
+    private boolean fromInformationl;
 
 
+    /** generates leaderboard screen
+     * @param owner
+     * @param area contains the dimensions of leaderboard
+     */
     public Leaderboard (GameFrame owner, Dimension area)
     {
         this.setFocusable(true);
@@ -77,13 +110,26 @@ public class Leaderboard extends JComponent implements MouseListener, MouseMotio
         leaderboardFont = new Font("Monospaced",Font.PLAIN,20);
     }
 
+    /** sets leaderboard score array to parameter
+     * @param SCORE contains new leaderboard score array
+     */
     public void setSCORE(int[] SCORE) {this.SCORE = SCORE;}
+
+    /** sets leaderboard name array to parameter
+     * @param NAME contains new leaderboard name array
+     */
     public void setNAME(String[] NAME) {this.NAME = NAME;}
 
+    /** draws leaderboard screen
+     * @param g Contains graphics controller
+     */
     public void paint(Graphics g){
         drawMenu((Graphics2D)g);
     }
 
+    /** draws leaderboard menu
+     * @param g2d Contains geometry controller
+     */
     public void drawMenu(Graphics2D g2d)
     {
         drawContainer(g2d);
@@ -108,6 +154,10 @@ public class Leaderboard extends JComponent implements MouseListener, MouseMotio
         g2d.setFont(tmpFont);
         g2d.setColor(tmpColor);
     }
+
+    /** draws leaderboard screen text
+     * @param g2d Contains geometry controller
+     */
     private void drawText(Graphics2D g2d){
         g2d.setColor(TEXT_COLOR);
 
@@ -134,6 +184,10 @@ public class Leaderboard extends JComponent implements MouseListener, MouseMotio
             g2d.drawString(String.format("| %d",SCORE[x]), sX, sY);
         }
     }
+
+    /** Draws leaderboard background and window borders
+     * @param g2d Contains geometry controller
+     */
     private void drawContainer(Graphics2D g2d){
         //adding background image
         g2d.fill(menuFace);
@@ -153,6 +207,9 @@ public class Leaderboard extends JComponent implements MouseListener, MouseMotio
         g2d.setStroke(tmp);
     }
 
+    /** draws leaderboard screenn buttons
+     * @param g2d Contains geometry controller
+     */
     private void drawButton(Graphics2D g2d){
         FontRenderContext frc = g2d.getFontRenderContext();
         Rectangle2D bTxtRect = buttonFont.getStringBounds(BACK_TEXT,frc);
@@ -182,12 +239,12 @@ public class Leaderboard extends JComponent implements MouseListener, MouseMotio
         }
 
     }
-    public void setFromTutorial(boolean fromTutorial){this.fromTutorial=fromTutorial;}
+    public void setFromInformationl(boolean fromInformationl){this.fromInformationl = fromInformationl;}
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
         Point p = mouseEvent.getPoint();
-        if(backButton.contains(p)){owner.disableLeaderboard(fromTutorial);}
+        if(backButton.contains(p)){owner.disableLeaderboard(fromInformationl);}
     }
 
     @Override

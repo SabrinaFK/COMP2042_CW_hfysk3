@@ -5,10 +5,24 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+/** This class is used to load and play audio
+ * @author Sabrina Felicia Kusumawati
+ * @version 0.2
+ */
+
 public class AudioPlayer {
-    public boolean muteAudio;               //Indicates if audio is muted / unmuted
+    /**
+     * Indicates if loaded audio is muted / unmuted
+     */
+    public boolean muteAudio;
+    /**
+     * Contains the audio clip specified by fileName in AudioPlayer
+     */
     private Clip clip;
 
+    /** loads the audio file that is going to be played
+     * @param fileName it contains the file path for the audio that is going to be played
+     */
     public AudioPlayer(String fileName) {
         // specify the sound to play
         // (assuming the sound can be played by the audio system)
@@ -44,16 +58,28 @@ public class AudioPlayer {
 
         // play, stop, loop the sound clip
     }
+
+    /**
+     * This method is used to Play the audio file loaded by AudioPlayer
+     */
     public void play(){
         if (!muteAudio){
             clip.setFramePosition(0);  // Must always rewind!
             clip.start();
         }
     }
+
+    /**
+     * This method is used to loop the audio loaded by AudioPlayer
+     */
     public void loop(){
         if (!muteAudio)
             clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
+
+    /**
+     * This method is used to stop the audio loaded by AudioPlayer
+     */
     public void stop(){
         clip.stop();
     }

@@ -22,22 +22,52 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 
-
+/**This class controls the game board
+ * @author Sabrina Felicia Kusumawati
+ * @version 0.2
+ */
 public class GameBoard extends JComponent implements KeyListener,MouseListener,MouseMotionListener {
-    //Text in Pause Menu
-    private static final String CONTINUE = "Continue";      //Text on Continue Button
-    private static final String RESTART = "Restart";        //Text on Restart Button
-    private String MUTE = "Mute";                           //Text on Mute / Unmute Button
-    private static final String HOME = "Home";              //Text on Home Button
-    private static final String EXIT = "Exit";              //Exit Button
+    /**
+     * Contains the text on Continue Button in Pause Menu
+     */
+    private static final String CONTINUE = "Continue";
+    /**
+     * Contains the text on Restart Button in Pause Menu
+     */
+    private static final String RESTART = "Restart";
+    /**
+     * Contains the text on Mute / Unmute Button in Pause Menu
+     */
+    private String MUTE = "Mute";
+    /**
+     * Contains the text on Home Button in Pause Menu
+     */
+    private static final String HOME = "Home";
+    /**
+     * Contains the text on Exit Button in Pause Menu
+     */
+    private static final String EXIT = "Exit";
+    /**
+     * Contains the title text in Pause Menu
+     */
     private static final String PAUSE = "Pause Menu";
 
-    //Format for Pause Menu
+    /**
+     * Contains Text size for Pause Menu
+     */
     private static final int TEXT_SIZE = 40;
+    /**
+     * Contains Color for Pause Menu background
+     */
     private static final Color MENU_COLOR = new Color(175, 228, 250);
 
-    //Game frame size
+    /**
+     * Contains Game board width
+     */
     private static final int DEF_WIDTH = 600;
+    /**
+     * Contains Game board heigh
+     */
     private static final int DEF_HEIGHT = 450;
 
     private Timer gameTimer;
@@ -45,12 +75,27 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     private GameFrame owner;
     private Wall wall;
 
-    private String message1;                //Top Text on the center of level
-    private String message2;                //Lower Text on the center of level
+    /**
+     * Contains the upper text in the center of the game baord
+     */
+    private String message1;
+    /**
+     * Contains the lower text in the center of the game baord
+     */
+    private String message2;
 
-    private boolean mute;                   //indicates if audio is muted/not
-    private boolean showPauseMenu;          //indicates if pause menu is visible / not
-    private boolean lvlAudioPlaying;        //indicates if lvl audio is playing / not
+    /**
+     * indicates if audio is muted/not
+     */
+    private boolean mute;
+    /**
+     * indicates if pause menu is visible / not
+     */
+    private boolean showPauseMenu;
+    /**
+     *indicates if lvl audio is playing / not
+     */
+    private boolean lvlAudioPlaying;
 
     private Font menuFont;
 
@@ -72,6 +117,9 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
 
     private DebugConsole debugConsole;
 
+    /** Generates the GameBoard
+     * @param owner
+     */
     public GameBoard(GameFrame owner){
         super();
         strLen = 0;
@@ -140,6 +188,9 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
 
     }
 
+    /**
+     * Initializes gameboard
+     */
     private void initialize(){
         this.setPreferredSize(new Dimension(DEF_WIDTH,DEF_HEIGHT));
         this.setFocusable(true);
@@ -149,6 +200,9 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         this.addMouseMotionListener(this);
     }
 
+    /** Draws the gameboard
+     * @param g contains the graphics controller
+     */
     public void paint(Graphics g){
         if (!lvlAudioPlaying)
         {
@@ -189,6 +243,9 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         Toolkit.getDefaultToolkit().sync();
     }
 
+    /** Sets gameboard background
+     * @param g2d contains the geometry controller
+     */
     private void clear(Graphics2D g2d){
         g2d.fillRect(0,0,getWidth(),getHeight());
 
@@ -197,6 +254,10 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         g2d.drawImage(picture, 0, 0, this);
     }
 
+    /** Generates the level
+     * @param brick generates the brick
+     * @param g2d contains the geometry controller
+     */
     private void drawBrick(Brick brick,Graphics2D g2d){
         Color tmp = g2d.getColor();
 
@@ -210,6 +271,10 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         g2d.setColor(tmp);
     }
 
+    /** Generates the ball
+     * @param ball contains the ball
+     * @param g2d contains the geometry controller
+     */
     private void drawBall(Ball ball,Graphics2D g2d){
         Color tmp = g2d.getColor();
 
@@ -224,6 +289,10 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         g2d.setColor(tmp);
     }
 
+    /** Generates the player
+     * @param p contains the player
+     * @param g2d contains the geometry controller
+     */
     private void drawPlayer(Player p,Graphics2D g2d){
         Color tmp = g2d.getColor();
 
@@ -237,11 +306,17 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         g2d.setColor(tmp);
     }
 
+    /** Draws the pause menu
+     * @param g2d contains the geometry controller
+     */
     private void drawMenu(Graphics2D g2d){
         obscureGameBoard(g2d);
         drawPauseMenu(g2d);
     }
 
+    /** Generates the pause menu background
+     * @param g2d contains the geometry controller
+     */
     private void obscureGameBoard(Graphics2D g2d){
 
         Composite tmp = g2d.getComposite();
@@ -257,6 +332,9 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         g2d.setColor(tmpColor);
     }
 
+    /** generates the pause menu buttons and text
+     * @param g2d contains the geometry controller
+     */
     private void drawPauseMenu(Graphics2D g2d){
         Font tmpFont = g2d.getFont();
         Color tmpColor = g2d.getColor();
@@ -324,6 +402,10 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         g2d.setFont(tmpFont);
         g2d.setColor(tmpColor);
     }
+
+    /** mutes all audio players in gameboard
+     * @param mute indicates if audio is muted or not
+     */
     public void muteAudio (boolean mute){
         this.mute = mute;
         if(mute){
@@ -338,6 +420,9 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         }
     }
 
+    /** gets mute status
+     * @return returns true if audio is muted
+     */
     public boolean getMute (){return mute;}
 
     @Override
