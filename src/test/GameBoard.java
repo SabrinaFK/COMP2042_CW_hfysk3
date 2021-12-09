@@ -43,7 +43,6 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     private Timer gameTimer;
 
     private GameFrame owner;
-
     private Wall wall;
 
     private String message1;                //Top Text on the center of level
@@ -62,14 +61,10 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     private Rectangle muteButtonRect;
     private Rectangle exitButtonRect;
 
-    private Rectangle scoreBoard;
-
     private int strLen;
     private int score;
 
     //Loading Audio
-        //Audio taken from https://www.youtube.com/watch?v=br3OzOrARh4 - 8-bit Win by Heatley Bros
-        private AudioPlayer win = new AudioPlayer("audio/bgm-win.wav");
         //Audio taken from https://mixkit.co
         private AudioPlayer sfx = new AudioPlayer("audio/sfx-next-lvl.wav");
         //Audio taken from https://sourceforge.net/projects/tlk-brickbreaker/files/Brick%20Breaker/MP3%20Files/
@@ -107,7 +102,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
                     message1 = "";
                     message2 = "";
                     owner.setScore(wall.getPlayerScore());
-                    owner.enableGameOver();
+                    owner.enableGameOver(false);
                     wall.setPlayerScore(0);
                 }
 
@@ -126,14 +121,17 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
                     wall.nextLevel();
                 }
                 else{
-
+                    wall.ballReset();
+                    wall.wallReset();
+                    wall.resetLevels();
                     gameAudio.stop();
-                    win.play();
-                    win.loop();
-
-                    message1 = "GREAT JOB!";
-                    message2 = "ALL WALLS DESTROYED";
+                    lvlAudioPlaying=false;
+                    owner.setScore(wall.getPlayerScore());
+                    owner.enableGameOver(true);
+                    message1 = "";
+                    message2 = "";
                     gameTimer.stop();
+                    wall.setPlayerScore(0);
                 }
             }
 
@@ -160,7 +158,6 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         }
         if (mute){
             gameAudio.stop();
-            win.stop();
             muteAudio(true);
             MUTE = "Unmute";
         }
@@ -333,13 +330,11 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
             wall.setMute(true);
             gameAudio.muteAudio= true;
             sfx.muteAudio= true;
-            win.muteAudio= true;
         }
         else {
             wall.setMute(false);
             gameAudio.muteAudio= false;
             sfx.muteAudio= false;
-            win.muteAudio= false;
         }
     }
 
@@ -433,7 +428,6 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
             lvlAudioPlaying = !lvlAudioPlaying;
             gameAudio.muteAudio= !gameAudio.muteAudio;
             sfx.muteAudio= !sfx.muteAudio;
-            win.muteAudio= !win.muteAudio;
             repaint();
         }
         else if(exitButtonRect.contains(p)){

@@ -39,6 +39,8 @@ public class GameFrame extends JFrame implements WindowFocusListener {
 
     //Audio taken from https://www.youtube.com/watch?v=j29TCZYJgWA - Game Over by MB Music
     private AudioPlayer gameOverAudio = new AudioPlayer("audio/bgm-game-over.wav");
+    //Audio taken from https://www.youtube.com/watch?v=br3OzOrARh4 - 8-bit Win by Heatley Bros
+    private AudioPlayer winAudio = new AudioPlayer("audio/bgm-win.wav");
 
     private boolean gaming;
 
@@ -136,6 +138,7 @@ public class GameFrame extends JFrame implements WindowFocusListener {
     }
 
     public void enableGameBoard(){
+        winAudio.stop();
         gameOverAudio.stop();
         this.dispose();
         this.remove(homeMenu);
@@ -177,11 +180,18 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         this.addWindowFocusListener(this);
     }
 
-    public void enableGameOver(){
+    public void enableGameOver(boolean win){
         ReadFile();
         if (!gameBoard.getMute()){
-            gameOverAudio.play();
-            gameOverAudio.loop();
+            if (win){
+                winAudio.play();
+                winAudio.loop();
+            }
+            else
+            {
+                gameOverAudio.play();
+                gameOverAudio.loop();
+            }
         }
         this.dispose();
         this.remove(gameBoard);
@@ -241,6 +251,7 @@ public class GameFrame extends JFrame implements WindowFocusListener {
             initialize();
             /*to avoid problems with graphics focus controller is added here*/
             this.addWindowFocusListener(this);
+            winAudio.stop();
             gameOverAudio.stop();
             homeMenu.setMute(gameBoard.getMute());
         }
